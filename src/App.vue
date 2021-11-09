@@ -1,10 +1,26 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
-  <router-view />
+  <div>{{ user }}</div>
+  <button @click="onclickHandler">按钮</button>
+  <button @click="onclickHandler" />
 </template>
+
+<script>
+import { useStore } from "vuex";
+export default {
+  setup() {
+    //  获取store对象
+    const store = useStore();
+    //点击事件
+    const onclickHandler = () => {
+      //  设置用户信息
+      store.commit("user/setUser", { token: "test" });
+    };
+    //获取用户的信息
+    const user = store.state.user;
+    return { onclickHandler, user };
+  },
+};
+</script>
 
 <style lang="less">
 #app {

@@ -3,7 +3,7 @@ import createPersistedState from "vuex-persistedstate";
 import user from "@/store/user";
 import cart from "@/store/cart";
 import category from "@/store/category";
-export default createStore({
+const store = createStore({
   modules: {
     user,
     cart,
@@ -22,3 +22,5 @@ export default createStore({
     }),
   ],
 });
+
+export default store;

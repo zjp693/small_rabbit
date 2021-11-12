@@ -1,6 +1,7 @@
 <template>
-  <div class="box">我是App</div>
+  <!--  <div classname="box">-->
   <RouterView></RouterView>
+  <!--  </div>-->
 </template>
 
 <script>
@@ -8,7 +9,8 @@ export default {};
 </script>
 
 <style scoped lang="less">
-.box {
-  color: @xtxColor;
-}
+//.box {
+//  width: 100000px;
+//  height: 10000px;
+//}
 </style>

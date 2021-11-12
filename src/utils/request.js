@@ -1,5 +1,3 @@
-//
-
 import axios from "axios";
 import store from "@/store";
 import router from "@/router";
@@ -17,7 +15,7 @@ const instanceWithoutToken = axios.create({ baseURL });
 instanceWithToken.interceptors.request.use((config) => {
   const token = store.state.user.profile.token;
   if (token) {
-    //  奖token 存储在请求头中
+    //  将token 存储在请求头中
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -53,7 +51,7 @@ instanceWithToken.interceptors.response.use(
 instanceWithoutToken.interceptors.response.use((response) => {
   return response.data;
 });
-//
+
 //用于生成请求配置的函数
 export function generateRequestConfig(url, method, data) {
   return {
@@ -64,9 +62,9 @@ export function generateRequestConfig(url, method, data) {
 }
 //用于发送携带token的请求
 export function requestWithToken(url, method, data) {
-  instanceWithoutToken(generateRequestConfig(url, method, data));
+  return instanceWithToken(generateRequestConfig(url, method, data));
 }
 //用于发送 未携带token的普通请求
 export function requestWithOutToken(url, method, data) {
-  instanceWithoutToken(generateRequestConfig((url, method, data)));
+  return instanceWithoutToken(generateRequestConfig(url, method, data));
 }

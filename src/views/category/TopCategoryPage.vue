@@ -1,11 +1,13 @@
 <template>
-  <AppLayout>home page</AppLayout>
+  <AppLayout>
+    <div>category</div>
+  </AppLayout>
 </template>
-
 <script>
 import AppLayout from "@/components/AppLayout";
+
 export default {
-  name: "Home",
+  name: "CategoryPage",
   components: { AppLayout },
 };
 </script>

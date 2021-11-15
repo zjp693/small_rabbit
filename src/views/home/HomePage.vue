@@ -7,7 +7,8 @@
 
 <script>
 import AppLayout from "@/components/AppLayout";
-import HomeCategory from "@/components/HomeCategory";
+import HomeCategory from "@/views/home/components/HomeCategory";
+
 export default {
   name: "Home",
   components: { AppLayout, HomeCategory },

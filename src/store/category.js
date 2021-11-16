@@ -1,4 +1,4 @@
-import { getCategoriesApi } from "@/api/category";
+import { getCategoriesApi } from "@/api/home";
 import { topCategories } from "@/api/constants";
 
 export default {

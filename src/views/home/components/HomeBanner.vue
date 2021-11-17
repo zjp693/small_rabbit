@@ -1,6 +1,8 @@
 <template>
   <div class="home-banner">
-    <XtxCarousel :carousels="banners" />
+    <template v-if="banners">
+      <XtxCarousel :carousels="banners" :autoPlay="true" />
+    </template>
   </div>
 </template>
 <script>
@@ -11,6 +13,7 @@ export default {
   name: "HomeBanner",
   setup() {
     const banners = useBanners();
+    // console.log(banners);
     return { banners };
   },
 };

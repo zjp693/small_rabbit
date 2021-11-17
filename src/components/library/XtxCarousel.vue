@@ -1,5 +1,9 @@
 <template>
-  <div class="xtx-carousel">
+  <div
+    class="xtx-carousel"
+    @mouseenter="stopAutoPlay"
+    @mouseleave="runAutoPlay"
+  >
     <ul class="carousel-body">
       <li
         class="carousel-item"
@@ -29,7 +33,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
 export default {
   name: "XtxCarousel",
@@ -47,12 +51,38 @@ export default {
   },
   setup(props) {
     // console.log(props);
+    // console.log(props);
     //默认索引
     const currentIndex = ref(0);
     //用于存储定时器
-    // const timer = ref(null);
+    let timer = null;
+    //开启自动轮播
+    const runAutoPlay = () => {
+      // console.log("开了");
+      //  判断调用者是否开启了自动轮播
+      //  判断是否有轮播数据
+      if (props.autoPlay && props.carousels.length > 1) {
+        //  开启
+        // console.log(props.autoPlay);
+        timer = setInterval(() => {
+          toggle(1);
+          // console.log(111111);
+        }, props.duration);
+      }
+    };
+    //停止自动轮播
+    const stopAutoPlay = () => {
+      // console.log("关掉");
+      clearInterval(timer);
+    };
+    //组件挂载完成后 开启轮播图
+    onMounted(runAutoPlay);
+    //组件卸载后 关闭轮播图
+    onUnmounted(stopAutoPlay);
+
     //切换图片
     const toggle = (step) => {
+      // console.log(step);
       const nextIndex = currentIndex.value + step;
       //如果当前图片没有没有上一张照片
       if (nextIndex < 0) {
@@ -66,7 +96,7 @@ export default {
         currentIndex.value = nextIndex;
       }
     };
-    return { currentIndex, toggle };
+    return { currentIndex, toggle, stopAutoPlay, runAutoPlay };
   },
 };
 </script>

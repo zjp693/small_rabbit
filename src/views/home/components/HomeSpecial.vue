@@ -1,28 +1,31 @@
 <template>
-  <HomePanel title="最新专题">
+  <HomePanel title="最新专题" ref="target">
     <template v-slot:right>
       <XtxMore />
     </template>
     <template v-slot:default>
       <div class="special-list">
-        <div class="special-item" v-for="i in 3" :key="i">
+        <div class="special-item" v-for="item in special" :key="item.id">
           <RouterLink to="/">
-            <img
-              src="http://zhoushugang.gitee.io/erabbit-client-pc-static/uploads/topic_goods_1.jpg"
-              alt
-            />
+            <img :src="item.cover" alt="" />
             <div class="meta">
               <p class="title">
-                <span class="top ellipsis">看到撒娇的撒娇的凯撒就</span>
-                <span class="sub ellipsis">倒萨倒萨倒萨</span>
+                <span class="top ellipsis">{{ item.title }}</span>
+                <span class="sub ellipsis">{{ item.summary }}</span>
               </p>
-              <span class="price">&yen;19.99起</span>
+              <span class="price">&yen;{{ item.lowestPrice }}起</span>
             </div>
           </RouterLink>
           <div class="foot">
-            <span class="like"><i class="iconfont icon-hart1"></i>100</span>
-            <span class="view"><i class="iconfont icon-see"></i>100</span>
-            <span class="reply"><i class="iconfont icon-message"></i>100</span>
+            <span class="like"
+              ><i class="iconfont icon-hart1"></i>{{ item.collectNum }}</span
+            >
+            <span class="view"
+              ><i class="iconfont icon-see"></i>{{ item.viewNum }}</span
+            >
+            <span class="reply"
+              ><i class="iconfont icon-message"></i>{{ item.replyNum }}</span
+            >
           </div>
         </div>
       </div>
@@ -32,9 +35,15 @@
 
 <script>
 import HomePanel from "@/views/home/components/HomePanel";
+import userLazyData from "@/hooks/userLazyData";
+import { getSpecial } from "@/api/home";
 export default {
   name: "HomeSpecial",
   components: { HomePanel },
+  setup() {
+    const { target, result: special } = userLazyData(getSpecial);
+    return { target, special };
+  },
 };
 </script>
 

@@ -49,3 +49,12 @@ export function getHomeHot() {
 export function getProducts() {
   return requestWithOutToken("/home/goods", "get");
 }
+
+/**
+ * 获取最新专题
+ * @param limit
+ * @returns {AxiosPromise}
+ */
+export function getSpecial(limit) {
+  return requestWithOutToken("/home/special", "get", { limit });
+}

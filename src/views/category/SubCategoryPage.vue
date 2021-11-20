@@ -47,7 +47,6 @@ function useBread() {
       //  遍历二级分类
       topCategory.children?.forEach((subCategory) => {
         //  查找当前二级分类
-        console.log(topCategory.id, route.params.id);
         if (subCategory.id === route.params.id) {
           //  存储一级分类
           result.topCategory = {

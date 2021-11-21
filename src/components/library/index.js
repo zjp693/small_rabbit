@@ -1,19 +1,20 @@
-//导入组件
-import XtxSkeleton from "@/components/library/XtxSkeleton";
-import XtxCarousel from "@/components/library/XtxCarousel";
-import XtxMore from "@/components/library/XtxMore";
-import XtxBread from "@/components/library/XtxBread";
-import XtxBreadItem from "@/components/library/XtxBreadItem";
 import lazy from "@/components/directive/lazy";
+
+// 1. 获取模块的路径集合 获取模块的导入函数
+const importFn = require.context("./", false, /\.vue$/);
+// 2. 获取要导入的文件的路径
+const keys = importFn.keys();
 
 export default {
   install(app) {
-    //注册组件
-    app.component(XtxSkeleton.name, XtxSkeleton);
-    app.component(XtxCarousel.name, XtxCarousel);
-    app.component(XtxMore.name, XtxMore);
-    app.component(XtxBread.name, XtxBread);
-    app.component(XtxBreadItem.name, XtxBreadItem);
     app.directive("lazy", lazy);
+    //批量注册组件
+    //  遍历导入的文件的路径
+    keys.forEach((item) => {
+      //  动态导入组件
+      const component = importFn(item).default;
+      //  注册组件
+      app.component(component.name, component);
+    });
   },
 };

@@ -19,6 +19,7 @@
 import AppLayout from "@/components/AppLayout";
 import XtxBread from "@/components/library/XtxBread";
 import XtxBreadItem from "@/components/library/XtxBreadItem";
+
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 import { computed } from "vue";
@@ -28,6 +29,7 @@ export default {
   components: { AppLayout, XtxBread, XtxBreadItem },
   setup() {
     const category = useBread();
+
     return { category };
   },
 };
@@ -45,8 +47,8 @@ function useBread() {
       //  遍历二级分类
       topCategory.children?.forEach((subCategory) => {
         //  查找当前二级分类
-        // console.log(topCategory.id, route.params.id);
-        if (topCategory.id === route.params.id) {
+        console.log(topCategory.id, route.params.id);
+        if (subCategory.id === route.params.id) {
           //  存储一级分类
           result.topCategory = {
             name: topCategory.name,

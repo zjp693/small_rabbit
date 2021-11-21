@@ -10,6 +10,13 @@
         </Transition>
         <XtxBreadItem :carousels="banners"></XtxBreadItem>
       </XtxBread>
+      <!-- 调用轮播图组件 -->
+      <XtxCarousel
+        :carousels="banners"
+        :style="{
+          height: '500px',
+        }"
+      />
     </div>
   </AppLayout>
 </template>
@@ -17,22 +24,20 @@
 import AppLayout from "@/components/AppLayout";
 import XtxBread from "@/components/library/XtxBread";
 import XtxBreadItem from "@/components/library/XtxBreadItem";
+import XtxCarousel from "@/components/library/XtxCarousel";
+
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import { computed } from "vue";
 import { useBanners } from "@/hooks/useBanners";
-// import category from "@/store/category";
 export default {
   name: "CategoryPage",
-  components: { AppLayout, XtxBread, XtxBreadItem },
+  components: { AppLayout, XtxBread, XtxBreadItem, XtxCarousel },
   setup() {
     const topCategory = useCategory();
 
     const { banners, getData } = useBanners();
     getData(2);
-    setTimeout(() => {
-      // console.log(topCategory);
-    }, 2000);
     return { topCategory, banners };
   },
 };

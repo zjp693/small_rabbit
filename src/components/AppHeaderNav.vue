@@ -16,7 +16,7 @@
       <div class="layer" :class="{ open: item.open }">
         <ul>
           <li v-for="sub in item.children" :key="sub.id">
-            <router-link :to="`/category/sub/${item.id}`">
+            <router-link :to="`/category/sub/${sub.id}`">
               <img :src="sub.picture" alt="sub.name" />
               <p>{{ sub.name }}</p>
             </router-link>

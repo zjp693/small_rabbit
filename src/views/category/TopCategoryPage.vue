@@ -17,12 +17,14 @@
           height: '500px',
         }"
       />
-      <!--      全部分类-->
+      <!--    全部二级分类-->
 
       <ShowSubCategoryList
         :subCategories="topCategory.children"
         v-if="topCategory"
       ></ShowSubCategoryList>
+      <!-- 二级分类商品推荐    -->
+      <RecommendGoods></RecommendGoods>
     </div>
   </AppLayout>
 </template>
@@ -32,6 +34,7 @@ import XtxBread from "@/components/library/XtxBread";
 import XtxBreadItem from "@/components/library/XtxBreadItem";
 import XtxCarousel from "@/components/library/XtxCarousel";
 import ShowSubCategoryList from "@/views/category/components/ShowSubCategoryList";
+import RecommendGoods from "@/views/category/components/RecommendGoods";
 
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
@@ -45,14 +48,13 @@ export default {
     XtxBreadItem,
     XtxCarousel,
     ShowSubCategoryList,
+    RecommendGoods,
   },
   setup() {
     const topCategory = useCategory();
     const { banners, getData } = useBanners();
     getData(2);
-    setTimeout(() => {
-      console.log(topCategory);
-    });
+
     return { topCategory, banners };
   },
 };

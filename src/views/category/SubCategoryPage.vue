@@ -1,17 +1,20 @@
 <template>
   <AppLayout>
-    <div class="container"></div>
-    <XtxBread>
-      <XtxBreadItem path="/">首页</XtxBreadItem>
-      <XtxBreadItem :path="`/category/${category.topCategory?.id}`">
-        {{ category.topCategory?.name }}
-      </XtxBreadItem>
-      <Transition name="fade-right" mode="out-in">
-        <XtxBreadItem :key="category.subCategory?.id">
-          {{ category.subCategory?.name }}
+    <div class="container">
+      <XtxBread>
+        <XtxBreadItem path="/">首页</XtxBreadItem>
+        <XtxBreadItem :path="`/category/${category.topCategory?.id}`">
+          {{ category.topCategory?.name }}
         </XtxBreadItem>
-      </Transition>
-    </XtxBread>
+        <Transition name="fade-right" mode="out-in">
+          <XtxBreadItem :key="category.subCategory?.id">
+            {{ category.subCategory?.name }}
+          </XtxBreadItem>
+        </Transition>
+      </XtxBread>
+      <!--    筛选条件-->
+      <SubFilter @onFilterParamsChanged="onParamsChanged"></SubFilter>
+    </div>
   </AppLayout>
 </template>
 
@@ -19,6 +22,7 @@
 import AppLayout from "@/components/AppLayout";
 import XtxBread from "@/components/library/XtxBread";
 import XtxBreadItem from "@/components/library/XtxBreadItem";
+import SubFilter from "@/views/category/components/SubFilter";
 
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
@@ -26,11 +30,14 @@ import { computed } from "vue";
 
 export default {
   name: "SubCategoryPage",
-  components: { AppLayout, XtxBread, XtxBreadItem },
+  components: { AppLayout, XtxBread, XtxBreadItem, SubFilter },
   setup() {
     const category = useBread();
-
-    return { category };
+    //获取用户筛选条件
+    const onParamsChanged = (target) => {
+      console.log(target);
+    };
+    return { category, onParamsChanged };
   },
 };
 function useBread() {

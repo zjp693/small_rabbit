@@ -1,6 +1,6 @@
 <template>
   <!-- 筛选区 -->
-  <div class="sub-filter" v-if="filters">
+  <div class="sub-filter" v-if="filters && !filtersLoading">
     <div class="item">
       <div class="head">品牌：</div>
       <div class="body">
@@ -34,18 +34,28 @@
       </div>
     </div>
   </div>
+  <!--  筛选数据的骨架屏-->
+  <div class="sub-filter" v-else>
+    <XtxSkeleton class="item" width="800px" height="40px" />
+    <XtxSkeleton class="item" width="800px" height="40px" />
+    <XtxSkeleton class="item" width="600px" height="40px" />
+    <XtxSkeleton class="item" width="600px" height="40px" />
+    <XtxSkeleton class="item" width="600px" height="40px" />
+  </div>
 </template>
 <script>
-import { useRoute } from "vue-router";
+import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { ref } from "vue";
 import { getSubCategoryById } from "@/api/category";
 
 export default {
   name: "SubFilter",
+  emits: ["onFilterParamsChanged"],
   setup(props, { emit }) {
-    const { filters, updateSelectedFilters } = useSubCategoryFilter(emit);
+    const { filters, updateSelectedFilters, filtersLoading } =
+      useSubCategoryFilter(emit);
 
-    return { filters, updateSelectedFilters };
+    return { filters, updateSelectedFilters, filtersLoading };
   },
 };
 //获取筛选条件
@@ -54,9 +64,10 @@ function useSubCategoryFilter(emit) {
   const route = useRoute();
   //  用于存储所以的筛选条件数据
   const filters = ref();
+  //用于存储筛选数据的加载状态
+  const filtersLoading = ref(false);
   //将用户选择的筛选条件传递到父组件
-  emit("onFilterParamsChanged", selectedFilters);
-
+  // emit("onFilterParamsChanged", selectedFilters);
   //用于存储用户用户选择的筛选条件
   const selectedFilters = ref({
     brandId: null,
@@ -64,6 +75,7 @@ function useSubCategoryFilter(emit) {
   });
   //  获取筛选条件
   getSubCategoryById(route.params.id).then((data) => {
+    filtersLoading.value = true;
     //在品牌筛选条件的前面加上`全部`筛选选项
     data.result.brands.unshift({ id: null, name: "全部" });
     //  在其他的筛选的条件的前面的加上`全部`筛选选项
@@ -76,7 +88,11 @@ function useSubCategoryFilter(emit) {
     filters.value = data.result;
     //  用于用户选择的品牌id
     data.result.selectedBrandId = null;
+    //  更新筛选数据的加载状态
+    filtersLoading.value = false;
   });
+  //路由切换时获取筛选条件数据
+  onBeforeRouteUpdate((to) => getSubCategoryById(to.params.id));
   //用于更新用户的筛选条件
   const updateSelectedFilters = () => {
     // console.log(filters.value.selectedBrandId, filters.value);
@@ -86,8 +102,6 @@ function useSubCategoryFilter(emit) {
     selectedFilters.value.attrs = [];
     //  更新用户选择的筛选条件
     filters.value.saleProperties.forEach((item) => {
-      console.log("---", item);
-      console.log(item.selectedFilterName);
       //  如果用户选择的当前筛选类别的筛选条件
       if (item.selectedFilterName && item.selectedFilterName !== "全部") {
         //  收集用户选择的筛选条件和具体的筛选条件名称
@@ -97,12 +111,11 @@ function useSubCategoryFilter(emit) {
         });
       }
     });
-    console.log("========", filters.value, selectedFilters.value);
     // 将用户选择的筛选条件传递到父组件
     emit("onFilterParamsChanged", selectedFilters);
   };
 
-  return { filters, updateSelectedFilters };
+  return { filters, updateSelectedFilters, filtersLoading };
 }
 </script>
 <style scoped lang="less">
@@ -130,5 +143,8 @@ function useSubCategoryFilter(emit) {
       }
     }
   }
+}
+.xtx-skeleton {
+  padding: 10px 0;
 }
 </style>

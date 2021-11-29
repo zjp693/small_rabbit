@@ -25,7 +25,10 @@
           </div>
           <!-- 右侧 -->
           <div class="spec">
+            <!--            单品信息-->
             <GoodsInfo :goods="goodsDetail"></GoodsInfo>
+            <!--            规格组价-->
+            <GoodsSku :specs="goodsDetail.specs"></GoodsSku>
           </div>
         </div>
         <!-- 商品推荐 -->
@@ -52,13 +55,24 @@ import GoodsImages from "@/views/goods/components/GoodsImages";
 import AppLayout from "@/components/AppLayout";
 import GoodsSales from "@/views/goods/components/GoodsSales";
 import GoodsInfo from "@/views/goods/components/GoodsInfo";
+import GoodsSku from "@/views/goods/components/GoodsSku";
+
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { getGoodsDetail } from "@/api/goods";
 import { ref } from "vue";
 
 export default {
   name: "GoodsDetailPage",
-  components: { GoodsRelevant, AppLayout, GoodsImages, GoodsSales, GoodsInfo },
+
+  components: {
+    GoodsRelevant,
+    AppLayout,
+    GoodsImages,
+    GoodsSales,
+    GoodsInfo,
+    GoodsSku,
+  },
+
   setup() {
     const { goodsDetail, getData } = useGoods();
     // 获取路由信息对象

@@ -24,5 +24,5 @@ export function getSubCategoryById(id) {
  * @returns {AxiosPromise}
  */
 export function getGoodsList(reqParams) {
-  return requestWithOutToken("/category/goods/temporary", "post", reqParams);
+  return requestWithOutToken("/category/goods", "post", reqParams);
 }

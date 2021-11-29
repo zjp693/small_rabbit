@@ -12,6 +12,7 @@
 </template>
 <script>
 import { ref } from "vue";
+import { useIntersectionObserver } from "@vueuse/core";
 
 export default {
   name: "XtxInfiniteLoading",
@@ -27,10 +28,20 @@ export default {
       default: false,
     },
   },
-  setup() {
+  setup(props, { emit }) {
     //被监听元素
     const target = ref(null);
-
+    //执行监听元素的操作
+    useIntersectionObserver(target, ([{ isIntersecting }]) => {
+      console.log(1);
+      //如果元素进入可视区
+      if (isIntersecting) {
+        //  如果没有正在加载并且还有数据可以加载
+        if (!props.loading && !props.finished) {
+          emit("infinite");
+        }
+      }
+    });
     return { target };
   },
 };

@@ -20,7 +20,9 @@
         <SubSort @onSortParamsChanged="onFilterSortParamsChanged" />
         <!-- 商品列表 -->
         <GoodsList :goods="result.items" v-if="result" />
-        <XtxInfiniteLoading />
+        <!--        加载更多-->
+
+        <XtxInfiniteLoading :loading="loading" :finished="finished" />
       </div>
     </div>
   </AppLayout>
@@ -57,8 +59,15 @@ export default {
       console.log(target);
     };
     //商品数据
-    const { result, onFilterSortParamsChanged } = uesGoods();
-    return { category, onParamsChanged, result, onFilterSortParamsChanged };
+    const { result, onFilterSortParamsChanged, loading, finished } = uesGoods();
+    return {
+      category,
+      onParamsChanged,
+      result,
+      onFilterSortParamsChanged,
+      loading,
+      finished,
+    };
   },
 };
 function useBread() {
@@ -94,6 +103,10 @@ function useBread() {
 }
 //获取商品数据
 function uesGoods() {
+  // 用于标识加载状态
+  const loading = ref(false);
+  // 用于标识是否全部数据都已经加载完成
+  const finished = ref(false);
   //  获取路由信息对象
   const route = useRoute();
   //  用于存储商品数据
@@ -102,17 +115,12 @@ function uesGoods() {
   let reqParams = ref({
     categoryId: route.params.id,
   });
-
   //  用于获取商品数据
   const getGoods = () => {
     //  获取商品数据
-    console.log(reqParams);
 
     getGoodsList(reqParams.value).then((data) => {
       result.value = data.result;
-      setTimeout(() => {
-        console.log(result);
-      }, 1000);
     });
   };
   //用于更新请求参数
@@ -134,7 +142,7 @@ function uesGoods() {
       immediate: true,
     }
   );
-  return { result, onFilterSortParamsChanged };
+  return { result, onFilterSortParamsChanged, loading, finished };
 }
 </script>
 

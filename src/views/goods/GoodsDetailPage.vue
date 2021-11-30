@@ -35,15 +35,24 @@
               @onSpecChanged="onSpecChanged"
             ></GoodsSku>
             <!--            商品数量-->
-            <XtxNumberBox></XtxNumberBox>
+            <XtxNumberBox
+              label="数量"
+              :max="goodsDetail.inventory"
+              v-model="count"
+            ></XtxNumberBox>
+            <!--            按钮组件-->
+            <XtxButton type="primary" :style="{ 'margin-top': '20px' }"
+              >加入购物车</XtxButton
+            >
           </div>
         </div>
         <!-- 商品推荐 -->
-        <GoodsRelevant></GoodsRelevant>
+        <GoodsRelevant :goodsId="goodsDetail.id"></GoodsRelevant>
         <!-- 商品详情 -->
         <div class="goods-footer">
           <div class="goods-article">
             <!-- 商品+评价 -->
+            <GoodsTab />
             <div class="goods-tabs"></div>
             <!-- 注意事项 -->
             <div class="goods-warn"></div>
@@ -63,6 +72,8 @@ import AppLayout from "@/components/AppLayout";
 import GoodsSales from "@/views/goods/components/GoodsSales";
 import GoodsInfo from "@/views/goods/components/GoodsInfo";
 import GoodsSku from "@/views/goods/components/GoodsSku";
+import XtxButton from "@/components/library/XtxButton";
+import GoodsTab from "@/views/goods/components/GoodsTab";
 
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { getGoodsDetail } from "@/api/goods";
@@ -78,12 +89,16 @@ export default {
     GoodsSales,
     GoodsInfo,
     GoodsSku,
+    XtxButton,
+    GoodsTab,
   },
 
   setup() {
     const { goodsDetail, getData } = useGoods();
+    //存储用户选择的商品数量
+    const count = ref(1);
+    // console.log(count);
     //监听规格组件传递过来的数据
-
     // 获取路由信息对象
     const route = useRoute();
     // 发送请求获取商品详情信息
@@ -95,7 +110,7 @@ export default {
       goodsDetail.value.oldPrice = data.oldPrice;
       goodsDetail.value.inventory = data.inventory;
     };
-    return { goodsDetail, getData, onSpecChanged };
+    return { goodsDetail, getData, onSpecChanged, count };
   },
 };
 function useGoods() {

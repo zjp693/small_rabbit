@@ -1,14 +1,16 @@
 <template>
   <div class="xtx-number-box">
-    <div class="label">数量</div>
+    <div class="label">{{ label }}</div>
     <div class="number-box">
-      <a href="javascript:">-</a>
-      <input type="text" readonly value="1" />
-      <a href="javascript:">+</a>
+      <a href="javascript:" @click="onNumberChangeHandler(-1)">-</a>
+      <input type="text" readonly :value="number" />
+      <a href="javascript:" @click="onNumberChangeHandler(1)">+</a>
     </div>
   </div>
 </template>
 <script>
+import { useVModel } from "@vueuse/core";
+
 export default {
   name: "XtxNumberBox",
   props: {
@@ -16,6 +18,30 @@ export default {
       type: Number,
       default: 1,
     },
+    max: {
+      type: Number,
+      default: 1,
+    },
+    label: {
+      type: String,
+      default: "",
+    },
+  },
+  setup(props, { emit }) {
+    //实现双向数据绑定
+    const number = useVModel(props, "modelValue", emit);
+    //用于改变商品数量的方法
+    const onNumberChangeHandler = (step) => {
+      const nextNumber = number.value + step;
+      if (nextNumber < 1) {
+        number.value = 1;
+      } else if (number > props.max) {
+        number.value = props.max;
+      } else {
+        number.value = nextNumber;
+      }
+    };
+    return { number, onNumberChangeHandler };
   },
 };
 </script>

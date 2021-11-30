@@ -118,13 +118,13 @@ export default {
           result[index] = undefined;
         }
       });
-      console.log(result, "==");
+      // console.log(result, "==");
       //返回当前用户的选中的规格
       return result;
     }
     //设置默认选中的规格组合
     function setDefaultSelected(skuId, skus, specs) {
-      console.log(skuId);
+      // console.log(skuId);
       //如果skuId不存在，说明不需要
       if (!skuId) return;
       // console.log(skus);

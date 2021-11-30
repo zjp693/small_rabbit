@@ -4,6 +4,7 @@
     @mouseenter="stopAutoPlay"
     @mouseleave="runAutoPlay"
   >
+    <!--    -->
     <ul class="carousel-body">
       <li
         class="carousel-item"
@@ -11,9 +12,21 @@
         v-for="(item, index) in carousels"
         :key="item.id"
       >
-        <RouterLink :to="item.hrefUrl">
+        <div class="slider" v-if="Array.isArray(item)">
+          <RouterLink
+            v-for="goods in item"
+            :key="goods.id"
+            :to="`/goods/${goods.id}`"
+          >
+            <img :src="goods.picture" alt="" />
+            <p class="name ellipsis">{{ goods.name }}</p>
+            <p class="price">&yen;{{ goods.price }}</p>
+          </RouterLink>
+        </div>
+        <!--        如果当前item 是对象就拜师当前遍历的是普通轮播图数据-->
+        <router-link :to="item.hrefUrl" v-else>
           <img :src="item.imgUrl" alt="" />
-        </RouterLink>
+        </router-link>
       </li>
     </ul>
     <a @click="toggle(-1)" href="javascript:" class="carousel-btn prev"
@@ -175,6 +188,30 @@ export default {
   &:hover {
     .carousel-btn {
       opacity: 1;
+    }
+  }
+}
+.slider {
+  display: flex;
+  justify-content: space-around;
+  padding: 0 40px;
+  > a {
+    width: 240px;
+    text-align: center;
+    img {
+      padding: 20px;
+      width: 230px !important;
+      height: 230px !important;
+    }
+    .name {
+      font-size: 16px;
+      color: #666;
+      padding: 0 40px;
+    }
+    .price {
+      font-size: 16px;
+      color: @priceColor;
+      margin-top: 15px;
     }
   }
 }

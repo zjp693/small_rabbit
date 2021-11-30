@@ -27,8 +27,15 @@
           <div class="spec">
             <!--            单品信息-->
             <GoodsInfo :goods="goodsDetail"></GoodsInfo>
-            <!--            规格组价-->
-            <GoodsSku :specs="goodsDetail.specs"></GoodsSku>
+            <!--            规格组件-->
+            <!--                   skuId="1369155864430120962"-->
+            <GoodsSku
+              :specs="goodsDetail.specs"
+              :skus="goodsDetail.skus"
+              @onSpecChanged="onSpecChanged"
+            ></GoodsSku>
+            <!--            商品数量-->
+            <XtxNumberBox></XtxNumberBox>
           </div>
         </div>
         <!-- 商品推荐 -->
@@ -75,11 +82,20 @@ export default {
 
   setup() {
     const { goodsDetail, getData } = useGoods();
+    //监听规格组件传递过来的数据
+
     // 获取路由信息对象
     const route = useRoute();
     // 发送请求获取商品详情信息
     getData(route.params.id);
-    return { goodsDetail, getData };
+    // 当用户选择完整的规格以后 更新视图
+    const onSpecChanged = (data) => {
+      console.log(data);
+      goodsDetail.value.price = data.price;
+      goodsDetail.value.oldPrice = data.oldPrice;
+      goodsDetail.value.inventory = data.inventory;
+    };
+    return { goodsDetail, getData, onSpecChanged };
   },
 };
 function useGoods() {

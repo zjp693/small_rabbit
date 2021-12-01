@@ -43,7 +43,6 @@ function useHotGoods(type) {
     getHotGoods({ id, type }).then((data) => {
       hotGoods.value = data.result;
     });
-    console.log(hotGoods);
   };
   getData(route.params.id);
   onBeforeRouteUpdate((to) => getData(to.params.id));

@@ -11,7 +11,7 @@
         @click="activeComponentName = 'GoodsComment'"
         :class="{ active: activeComponentName === 'GoodsComment' }"
         href="javascript:"
-        >商品评价<span>(500+)</span></a
+        >商品评价<span>({{ goodsDetail.commentCount }})</span></a
       >
     </nav>
     <!-- 切换内容的地方 -->
@@ -22,7 +22,7 @@
   </div>
 </template>
 <script>
-import { ref } from "vue";
+import { inject, ref } from "vue";
 import GoodsDetail from "@/views/goods/components/GoodsDetail";
 import GoodsComment from "@/views/goods/components/GoodsComment";
 export default {
@@ -31,7 +31,8 @@ export default {
   setup() {
     // GoodsDetail 展示商品详细信息、GoodsComment 展示商品评论信息
     const activeComponentName = ref("GoodsDetail");
-    return { activeComponentName };
+    const goodsDetail = inject("goodsDetail");
+    return { activeComponentName, goodsDetail };
   },
 };
 </script>

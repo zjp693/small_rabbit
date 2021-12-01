@@ -17,9 +17,6 @@ export default {
       default: () => ({}),
     },
   },
-  setup(props) {
-    console.log(props);
-  },
 };
 </script>
 

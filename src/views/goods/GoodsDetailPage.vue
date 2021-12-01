@@ -82,7 +82,7 @@ import GoodsHot from "@/views/goods/components/GoodsHot";
 
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { getGoodsDetail } from "@/api/goods";
-import { ref } from "vue";
+import { provide, ref } from "vue";
 
 export default {
   name: "GoodsDetailPage",
@@ -116,6 +116,7 @@ export default {
       goodsDetail.value.oldPrice = data.oldPrice;
       goodsDetail.value.inventory = data.inventory;
     };
+    provide("goodsDetail", goodsDetail);
     return { goodsDetail, getData, onSpecChanged, count };
   },
 };

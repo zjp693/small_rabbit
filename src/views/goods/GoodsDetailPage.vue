@@ -53,9 +53,8 @@
           <div class="goods-article">
             <!-- 商品+评价 -->
             <GoodsTab />
-            <div class="goods-tabs"></div>
             <!-- 注意事项 -->
-            <div class="goods-warn"></div>
+            <GoodsWarn></GoodsWarn>
           </div>
           <!-- 24热榜 -->
           <div class="goods-aside">
@@ -79,6 +78,7 @@ import GoodsSku from "@/views/goods/components/GoodsSku";
 import XtxButton from "@/components/library/XtxButton";
 import GoodsTab from "@/views/goods/components/GoodsTab";
 import GoodsHot from "@/views/goods/components/GoodsHot";
+import GoodsWarn from "@/views/goods/components/GoodsWarn";
 
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { getGoodsDetail } from "@/api/goods";
@@ -97,6 +97,7 @@ export default {
     XtxButton,
     GoodsTab,
     GoodsHot,
+    GoodsWarn,
   },
 
   setup() {

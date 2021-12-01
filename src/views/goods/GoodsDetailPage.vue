@@ -58,7 +58,11 @@
             <div class="goods-warn"></div>
           </div>
           <!-- 24热榜 -->
-          <div class="goods-aside"></div>
+          <div class="goods-aside">
+            <GoodsHot :type="1" />
+            <GoodsHot :type="2" />
+            <GoodsHot :type="3" />
+          </div>
         </div>
       </div>
     </div>
@@ -74,6 +78,7 @@ import GoodsInfo from "@/views/goods/components/GoodsInfo";
 import GoodsSku from "@/views/goods/components/GoodsSku";
 import XtxButton from "@/components/library/XtxButton";
 import GoodsTab from "@/views/goods/components/GoodsTab";
+import GoodsHot from "@/views/goods/components/GoodsHot";
 
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { getGoodsDetail } from "@/api/goods";
@@ -91,6 +96,7 @@ export default {
     GoodsSku,
     XtxButton,
     GoodsTab,
+    GoodsHot,
   },
 
   setup() {

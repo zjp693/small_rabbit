@@ -18,3 +18,13 @@ export function getGoodsDetail(id) {
 export function getRelevantGoods(id, limit = 16) {
   return requestWithOutToken("/goods/relevant", "get", { id, limit });
 }
+
+/**
+ *热销商品
+ * @param id
+ * @param limit
+ * @param type
+ */
+export function getHotGoods(id, limit = 3, type = 1) {
+  return requestWithOutToken("/goods/hot", "get", { id, limit, type });
+}

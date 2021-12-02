@@ -3,7 +3,6 @@
     <div class="xtx-goods-page" v-if="goodsDetail">
       <div class="container">
         <!-- 面包屑 -->
-        <!-- 面包屑 -->
         <XtxBread>
           <XtxBreadItem path="/"> 首页 </XtxBreadItem>
           <XtxBreadItem :path="`/category/${goodsDetail.categories[1].id}`">

@@ -4,6 +4,7 @@ const HomePage = () => import("@/views/home/HomePage");
 const TopCategoryPage = () => import("@/views/category/TopCategoryPage");
 const SubCategoryPage = () => import("@/views/category/SubCategoryPage");
 const GoodsDetailPage = () => import("@/views/goods/GoodsDetailPage");
+import LoginPage from "@/views/login/LoginPage";
 const routes = [
   {
     path: "/",
@@ -20,6 +21,10 @@ const routes = [
   {
     path: "/goods/:id",
     component: GoodsDetailPage,
+  },
+  {
+    path: "/login",
+    component: LoginPage,
   },
 ];
 

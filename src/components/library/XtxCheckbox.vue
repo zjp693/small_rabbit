@@ -7,13 +7,13 @@
   </div>
 </template>
 <script>
-import { watch } from "vue";
+// import { watch } from "vue";
 import { useVModel } from "@vueuse/core";
 
 export default {
   name: "XtxCheckbox",
   props: {
-    modeValue: {
+    modelValue: {
       type: Boolean,
       default: false,
     },
@@ -23,21 +23,23 @@ export default {
     // useVModel 实现双向数据绑定
     // 将 props 中的 modelValue 实现双向数据绑定
     // useModel 的返回值是一个新的响应式数据, 可以在当前模板中直接使用
-    const isChecked = useVModel(props, "modeValue", emit);
+    const isChecked = useVModel(props, "modelValue", emit);
+    // console.log(isChecked);
     //  更改复选框中状态
     const toggle = () => {
       //取反
       isChecked.value = !isChecked.value;
+      // console.log(isChecked.value);
       //  监听内部值的变化,将其同步给内部值
-      emit("update:modelValue", isChecked.value);
+      // emit("update:modelValue", isChecked.value);
     };
     //监听外部值的变化，将其同步到内部值
-    watch(
-      () => props.modeValue,
-      () => {
-        isChecked.value = props.modeValue;
-      }
-    );
+    // watch(
+    //   () => props.modelValue,
+    //   () => {
+    //     isChecked.value = props.modelValue;
+    //   }
+    // );
     return { isChecked, toggle };
   },
 };

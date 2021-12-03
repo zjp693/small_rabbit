@@ -8,11 +8,12 @@
               ><i class="iconfont icon-user"></i>{{ user.profile.account }}</a
             >
           </li>
+
           <li><a href="javascript:">退出登录</a></li></template
         >
         <template v-else>
           <li>
-            <a href=""><route to="/login">请先登录</route></a>
+            <a><router-link to="/login">请先登录</router-link></a>
           </li>
           <li><a href="javascript:">免费注册</a></li></template
         >

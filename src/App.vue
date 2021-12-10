@@ -1,11 +1,15 @@
 <template>
   <!--  <div classname="box">-->
-  <RouterView></RouterView>
+  <!--  <RouterView></RouterView>-->
   <!--  </div>-->
+  <XtxMessage type="warn" text="警告"></XtxMessage>
 </template>
 
 <script>
-export default {};
+import XtxMessage from "@/components/library/XtxMessage";
+export default {
+  components: { XtxMessage },
+};
 </script>
 
 <style scoped lang="less">

@@ -11,7 +11,7 @@
     <div class="form">
       <!-- 账户登录 -->
       <template v-if="!isMsgLogin">
-        <form @submit="onAccountFormSubmit">
+        <form @submit.prevent="onAccountFormSubmit">
           <div class="form-item">
             <div class="input">
               <i class="iconfont icon-user"></i>
@@ -55,7 +55,7 @@
       </template>
       <!-- 短信登录 -->
       <template v-if="isMsgLogin">
-        <form @submit="onMsgFormSubmit">
+        <form @submit.prevent="onMsgFormSubmit">
           <div class="form-item">
             <div class="input">
               <i class="iconfont icon-user"></i>
@@ -77,7 +77,14 @@
                 type="password"
                 placeholder="请输入验证码"
               />
-              <span class="code">发送验证码</span>
+              <span
+                class="code"
+                :class="{ disabled: count !== 0 }"
+                @click="getMsgCode()"
+              >
+                {{ count === 0 ? "发送验证码" : `剩余${count}秒` }}
+              </span>
+              <!--              <span class="code" @click="getMsgCode">发送验证码</span>-->
             </div>
             <div class="error" v-if="codeError">
               <i class="iconfont icon-warning">{{ codeError }}</i>
@@ -85,14 +92,14 @@
           </div>
           <div class="form-item">
             <div class="agree">
-              <XtxCheckbox v-model="isAgreeField" />
+              <XtxCheckbox v-model="isMsgAgreeField" />
               <span>我已同意</span>
               <a href="javascript:">《隐私条款》</a>
               <span>和</span>
               <a href="javascript:">《服务条款》</a>
             </div>
-            <div class="error" v-if="isAgreeError">
-              <i class="iconfont icon-warning">{{ isAgreeError }}</i>
+            <div class="error" v-if="isMsgAgreeError">
+              <i class="iconfont icon-warning">{{ isMsgAgreeError }}</i>
             </div>
           </div>
           <button type="submit" class="btn">登录</button>
@@ -100,10 +107,15 @@
       </template>
     </div>
     <div class="action">
-      <img
-        src="https://qzonestyle.gtimg.cn/qzone/vas/opensns/res/img/Connect_logo_7.png"
-        alt=""
-      />
+      <a
+        href="https://graph.qq.com/oauth2.0/show?which=Login&display=pc&client_id=100556005&response_type=token&scope=all&redirect_uri=http%3A%2F%2Fwww.corho.com%3A8080%2F%23%2Flogin%2Fcallback"
+      >
+        <img
+          src="https://qzonestyle.gtimg.cn/qzone/vas/opensns/res/img/Connect_logo_7.png"
+          alt=""
+        />
+      </a>
+
       <div class="url">
         <a href="javascript:">忘记密码</a>
         <a href="javascript:">免费注册</a>
@@ -122,9 +134,22 @@ import {
   mobile,
   code,
 } from "@/utils/vee-validate-schema";
+import {
+  getLoginMsgCode,
+  loginByAccountAndPassword,
+  loginByMobileMsgCode,
+} from "@/api/user";
+import useLoginAfter from "@/hooks/useLoginAfter";
+import Message from "@/components/library/Message";
+import useCountDown from "@/hooks/useCountDown";
 
 export default {
   name: "LoginForm",
+  methods: {
+    showMessage() {
+      this.$message({ type: "wan", text: "测试" });
+    },
+  },
   setup() {
     // 是否为短信登录 默认为 false 因为页面中默认显示的是账户登录
     const isMsgLogin = ref(false);
@@ -132,25 +157,58 @@ export default {
     const { handleAccountFormSubmit, ...accountForm } =
       useAccountFormValidate();
     //获取表单验证的相关数据
-    const { msgFormHandleSubmit, ...msgForm } = useMsgFormValidate();
+    const { msgFormHandleSubmit, getMobileIsValidate, ...msgForm } =
+      useMsgFormValidate();
+    // 获取登录成功回调函数和登录失败回调函数
+    const { loginSuccessful, loginFailed } = useLoginAfter();
+    const { count, start } = useCountDown();
+    // 获取验证码
+    const getMsgCode = async () => {
+      // 对手机号进行验证
+      const { isValid, mobile } = await getMobileIsValidate();
+      // 验证码发送成功后开启倒计时
+      start(60);
+      if (isValid) {
+        try {
+          // 发送请求获取手机验证码
+          await getLoginMsgCode(mobile);
+          // 验证码发送成功提示
+          Message({ type: "success", text: "验证码发送成功" });
+        } catch (error) {
+          // 验证码发送失败提示
+          Message({ type: "error", text: error.response.data.message });
+        }
+      }
+    };
     //处理账号表单登录
-    const onAccountFormSubmit = handleAccountFormSubmit((values) => {
-      //回调函数会表单验证通过以后执行
-      console.log(values);
-    });
+    const onAccountFormSubmit = handleAccountFormSubmit(
+      ({ account, password }) => {
+        //回调函数会表单验证通过以后执行
+        loginByAccountAndPassword({ account, password })
+          // 登录成功
+          .then(loginSuccessful)
+          //  登录失败
+          .catch(loginFailed);
+      }
+    );
+
     //处理短信登录表单
-    const onMsgFormSubmit = msgFormHandleSubmit((values) => {
-      console.log(values);
+    const onMsgFormSubmit = msgFormHandleSubmit(({ mobile, code }) => {
+      loginByMobileMsgCode({ mobile, code })
+        // 登录成功
+        .then(loginSuccessful)
+        // 登录失败
+        .catch(loginFailed);
     });
 
     return {
       isMsgLogin,
-      handleAccountFormSubmit,
       ...accountForm,
       onAccountFormSubmit,
       ...msgForm,
-      msgFormHandleSubmit,
       onMsgFormSubmit,
+      getMsgCode,
+      count,
     };
   },
 };
@@ -170,7 +228,6 @@ function useAccountFormValidate() {
     useField("password");
   const { value: isAgreeField, errorMessage: isAgreeError } =
     useField("isAgree");
-
   return {
     accountField,
     accountError,
@@ -188,18 +245,31 @@ function useMsgFormValidate() {
   });
 
   //短信登录验证
-  const { value: mobileField, errorMessage: mobileError } = useField("mobile");
+  const {
+    value: mobileField,
+    errorMessage: mobileError,
+    validate: mobileValidate,
+  } = useField("mobile");
   const { value: codeField, errorMessage: codeError } = useField("code");
-  const { value: isAgreeField, errorMessage: isAgreeError } =
+  const { value: isMsgAgreeField, errorMessage: isMsgAgreeError } =
     useField("isAgree");
+  // 单独验证用户是否输入了手机号
+  // 获取手机号是否验证通过
+  const getMobileIsValidate = async () => {
+    // 验证手机号, 获取验证结果
+    let { valid } = await mobileValidate();
+    // 返回验证结果
+    return { isValid: valid, mobile: mobileField.value };
+  };
   return {
     mobileField,
     mobileError,
     codeField,
     codeError,
     msgFormHandleSubmit,
-    isAgreeField,
-    isAgreeError,
+    isMsgAgreeField,
+    isMsgAgreeError,
+    getMobileIsValidate,
   };
 }
 </script>

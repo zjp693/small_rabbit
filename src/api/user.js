@@ -68,6 +68,7 @@ export function bindMobileAndQQ({ unionId, mobile, code }) {
 export function checkUsernameIsUnique(account) {
   return requestWithOutToken("/register/check", "get", { account });
 }
+
 /**
  * 获取手机验证码 (注册)
  * @param mobile 手机号
@@ -75,4 +76,27 @@ export function checkUsernameIsUnique(account) {
  */
 export function getRegisterMsgCode(mobile) {
   return requestWithOutToken("/register/code", "get", { mobile });
+}
+/**
+ * 创建新账户并绑定QQ
+ * @param unionId QQ用户唯一标识
+ * @param account 用户名
+ * @param mobile 手机号
+ * @param code 验证码
+ * @param password 密码
+ * @return {AxiosPromise}
+ */
+export function createNewAccountBindQQ({
+  unionId,
+  account,
+  mobile,
+  code,
+  password,
+}) {
+  return requestWithOutToken(`/login/social/${unionId}/complement`, "POST", {
+    account,
+    mobile,
+    code,
+    password,
+  });
 }

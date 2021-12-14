@@ -78,18 +78,37 @@ import {
   password,
   rePassword,
 } from "@/utils/vee-validate-schema";
-import { getRegisterMsgCode } from "@/api/user";
+import { createNewAccountBindQQ, getRegisterMsgCode } from "@/api/user";
 import Message from "@/components/library/Message";
 import useCountDown from "@/hooks/useCountDown";
+import useLoginAfter from "@/hooks/useLoginAfter";
 
 export default {
   name: "LoginCallbackBindPatch",
-  setup() {
+  props: {
+    unionId: {
+      type: String,
+    },
+  },
+  setup(props) {
+    // 获取登录成功回调函数、获取登录失败回调函数
+    const { loginSuccessful, loginFailed } = useLoginAfter();
     //获取表单处理的方法，将其他属性单独放入的对象中
     const { handleSubmit, getMobileIsValidate, ...rest } =
       useBindNewAccountFormValid();
     const onSubmitHandler = handleSubmit((values) => {
-      console.log(values);
+      console.log(props);
+      createNewAccountBindQQ({
+        unionId: props.unionId,
+        account: values.checkUserAccount,
+        mobile: values.mobile,
+        code: values.code,
+        password: values.password,
+      })
+        //  成功
+        .then(loginSuccessful)
+        //  失败
+        .catch(loginFailed);
     });
     //获取倒计时
     const { start, count, isActive } = useCountDown();
@@ -100,18 +119,21 @@ export default {
       //验证是否通过
       getMobileIsValidate().then(({ isValid, mobile }) => {
         //  如果手机号通过验证
+        console.log(mobile.value, isValid.value);
+        // console.log(Message, start);
         //发送验证 提示用户当前的操作是否成功
         if (isValid)
-          getRegisterMsgCode(mobile)
+          return getRegisterMsgCode(mobile.value)
             .then(() => {
               Message({ type: "success", text: "验证码发送成功" });
               //  开启倒计时
               start(60);
             })
-            .cache(() => {
+            .catch((error) => {
+              console.dir(error);
               Message({
                 type: "error",
-                text: `验证码发送失败`,
+                text: `验证码发送失败,${error.response.data.message}`,
               });
             });
       });
@@ -119,6 +141,7 @@ export default {
     return { onSubmitHandler, getMsgCode, ...rest, count, isActive };
   },
 };
+//表单验证
 function useBindNewAccountFormValid() {
   //创建表单验证的对象
   const { handleSubmit } = useForm({

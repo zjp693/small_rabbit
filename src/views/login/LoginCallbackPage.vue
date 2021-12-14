@@ -30,7 +30,7 @@
       <LoginCallbackBindPhone :unionId="unionId"></LoginCallbackBindPhone>
     </div>
     <div class="tab-content" v-if="!hasAccount">
-      <LoginCallbackPatch></LoginCallbackPatch>
+      <LoginCallbackPatch :unionId="unionId"></LoginCallbackPatch>
     </div>
   </section>
   <LoginFooter />
@@ -71,6 +71,7 @@ export default {
       //  2.向QQ互联网发送请求使用 access_tolen 换取用户的唯一标识 openId
       Login.getMe((openid) => {
         // console.log(openid);
+        unionId.value = openid;
         //  检测QQ绑定到账号
         findAccountByQQOpenid({ unionId: openid })
           .then(loginSuccessful)

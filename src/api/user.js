@@ -68,3 +68,11 @@ export function bindMobileAndQQ({ unionId, mobile, code }) {
 export function checkUsernameIsUnique(account) {
   return requestWithOutToken("/register/check", "get", { account });
 }
+/**
+ * 获取手机验证码 (注册)
+ * @param mobile 手机号
+ * @return {AxiosPromise}
+ */
+export function getRegisterMsgCode(mobile) {
+  return requestWithOutToken("/register/code", "get", { mobile });
+}

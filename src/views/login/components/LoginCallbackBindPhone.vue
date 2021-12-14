@@ -68,24 +68,25 @@ export default {
     });
 
     //获取倒计时
-    const { count, start } = useCountDown();
+    const { count, start, isActive } = useCountDown();
     //验证码
     const getMsgCode = async () => {
-      getMobileIsValidate()
-        .then(({ isValid, mobile }) => {
-          if (isValid) return getBindMobileMsgCode(mobile);
-        })
-        .then(() => {
+      let { isValid, mobile } = await getMobileIsValidate();
+
+      //用户输入了手机号通过了验证
+      if (isValid && !isActive.value) {
+        try {
+          await getBindMobileMsgCode(mobile);
           Message({ type: "success", text: "验证码发送成功" });
           // 开启倒计时
           start(60);
-        })
-        .catch((error) =>
+        } catch (error) {
           Message({
             type: "error",
             text: `验证码发送失败 ${error.response.data.message}`,
-          })
-        );
+          });
+        }
+      }
     };
     return {
       nickname,

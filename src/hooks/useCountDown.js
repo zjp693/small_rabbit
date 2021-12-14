@@ -32,5 +32,5 @@ export default function useCountDown() {
   // 组件卸载后清除定时器
   onUnmounted(pause);
   // 返回计时器数值
-  return { count, start };
+  return { count, start, isActive };
 }

@@ -157,9 +157,6 @@ export default {
         const skuId = pathMap[selected.join("_")];
         //  通过了 skuId 在规格集合中查找具体的规格对象信息
         const target = skus.find((sku) => sku.id === skuId);
-        console.log(skuId, "skuIds", pathMap, selected);
-        console.log(skus, "skus");
-        console.log(target, "target");
         // //  触发自定义事件将规格信息传递到父组件
         emit("onSpecChanged", {
           skuId,

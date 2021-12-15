@@ -40,7 +40,10 @@
               v-model="count"
             ></XtxNumberBox>
             <!--            按钮组件-->
-            <XtxButton type="primary" :style="{ 'margin-top': '20px' }"
+            <XtxButton
+              type="primary"
+              :style="{ 'margin-top': '20px' }"
+              @click="addCart"
               >加入购物车</XtxButton
             >
           </div>
@@ -82,6 +85,8 @@ import GoodsWarn from "@/views/goods/components/GoodsWarn";
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { getGoodsDetail } from "@/api/goods";
 import { provide, ref } from "vue";
+import Message from "@/components/library/Message";
+import { useStore } from "vuex";
 
 export default {
   name: "GoodsDetailPage",
@@ -107,17 +112,67 @@ export default {
     //监听规格组件传递过来的数据
     // 获取路由信息对象
     const route = useRoute();
+    //获取store对象
+    const store = useStore();
     // 发送请求获取商品详情信息
     getData(route.params.id);
     // 当用户选择完整的规格以后 更新视图
     const onSpecChanged = (data) => {
-      console.log(data);
       goodsDetail.value.price = data.price;
       goodsDetail.value.oldPrice = data.oldPrice;
       goodsDetail.value.inventory = data.inventory;
+      goodsDetail.value.currentSelectedSkuId = data.skuId;
+      goodsDetail.value.currentSelectedSkuText = data.specsText;
+      console.log(goodsDetail.value);
     };
+
+    //加入购物车
+    const addCart = () => {
+      //  判断是否选择了规格
+      if (!goodsDetail.value.currentSelectedSkuId) {
+        Message({ type: "error", text: "请选择商品规格" });
+        return;
+      }
+      // 2. 收集商品信息
+      const goods = {
+        // 商品id
+        id: goodsDetail.value.id,
+        // 商品 skuId
+        skuId: goodsDetail.value.currentSkuId,
+        // 商品名称
+        name: goodsDetail.value.name,
+        // 商品规格属性文字
+        attrsText: goodsDetail.value.currentAttrsText,
+        // 商品图片
+        picture: goodsDetail.value.mainPictures[0],
+        // 商品原价
+        price: goodsDetail.value.oldPrice,
+        // 商品现价
+        nowPrice: goodsDetail.value.price,
+        // 是否选中
+        selected: true,
+        // 商品库存
+        stock: goodsDetail.value.inventory,
+        // // 用户选择的商品数量
+        count: count.value,
+        // 是否为有效商品
+        isEffective: true,
+      };
+      // 3. 将商品加入购物车
+      store
+        .dispatch("cart/addGoodsToCart", goods)
+        //添加成功
+        .then(() => {
+          Message({ type: "success", text: "商品已成功被添加到购物车中" });
+        })
+        //  添加失败
+        .catch((error) => {
+          Message({ type: "success", text: `${error.response.data.message}}` });
+        });
+    };
+
     provide("goodsDetail", goodsDetail);
-    return { goodsDetail, getData, onSpecChanged, count };
+    return { goodsDetail, getData, onSpecChanged, count, addCart };
   },
 };
 function useGoods() {

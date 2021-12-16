@@ -39,6 +39,7 @@ function useTopCategory() {
     getTopCategoryById(id).then((data) => {
       //  存储一级分类
       topCategory.value = data.result;
+      // console.log(data.result);
     });
   };
   //在路由切回之前 获取目标路由参数id 根据id 获取最新的一级分类信息

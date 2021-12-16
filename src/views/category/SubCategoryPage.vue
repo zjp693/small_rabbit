@@ -21,8 +21,11 @@
         <!-- 商品列表 -->
         <GoodsList :goods="result.items" v-if="result" />
         <!--        加载更多-->
-
-        <XtxInfiniteLoading :loading="loading" :finished="finished" />
+        <XtxInfiniteLoading
+          :loading="loading"
+          :finished="finished"
+          @infinite="loadMore"
+        />
       </div>
     </div>
   </AppLayout>
@@ -54,19 +57,20 @@ export default {
   setup() {
     //轮播图
     const category = useBread();
+    const { loadMore } = uesGoods();
     //获取用户筛选条件
-    const onParamsChanged = (target) => {
-      console.log(target);
-    };
+    // const onParamsChanged = (target) => {
+    //   useSubCategoryFilter(target);
+    // };
     //商品数据
     const { result, onFilterSortParamsChanged, loading, finished } = uesGoods();
     return {
       category,
-      onParamsChanged,
       result,
       onFilterSortParamsChanged,
       loading,
       finished,
+      loadMore,
     };
   },
 };
@@ -114,22 +118,55 @@ function uesGoods() {
   //  用于存储请求参数
   let reqParams = ref({
     categoryId: route.params.id,
+    // 当前页
+    page: 1,
+    // 每次请求获取的数据条数
+    pageSize: 10,
   });
   //  用于获取商品数据
   const getGoods = () => {
     //  获取商品数据
-
     getGoodsList(reqParams.value).then((data) => {
-      result.value = data.result;
+      //如果当前不是第一页，直接赋值
+      if (reqParams.value.page === 1) {
+        result.value = data.result;
+        //当路由参数发生变化时重置页码
+        finished.value = false;
+      } else {
+        //  如果当前不是第一页，做商品列表数据的累加
+        result.value = {
+          ...data.result,
+          item: [...result.value.items, ...data.result.items],
+        };
+      }
+      //  如果当前页是最后一页
+      if (reqParams.value.page === data.result.page) {
+        //  所有数据已加载完成
+        finished.value = true;
+      }
     });
+  };
+  // 加载更多
+  const loadMore = () => {
+    reqParams.value = {
+      ...reqParams.value,
+      page: reqParams.value.page + 1,
+    };
   };
   //用于更新请求参数
   const onFilterSortParamsChanged = (target) => {
-    reqParams.value = { ...reqParams.value, ...target };
+    console.dir(target);
+    reqParams.value = { ...reqParams.value, ...target, page: 1 };
   };
   //路由更新，更新请求参数中的分类id
-  onBeforeRouteUpdate((to) => {
-    reqParams.value = { categoryId: to.params.id };
+  onBeforeRouteUpdate(() => {
+    reqParams.value = {
+      categoryId: route.params.id,
+      // 当前页
+      page: 1,
+      // 每次请求获取的数据条数
+      pageSize: 10,
+    };
   });
   //  监听请求参数变化，
   watch(
@@ -142,7 +179,7 @@ function uesGoods() {
       immediate: true,
     }
   );
-  return { result, onFilterSortParamsChanged, loading, finished };
+  return { result, onFilterSortParamsChanged, loading, finished, loadMore };
 }
 </script>
 

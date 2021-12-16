@@ -52,16 +52,17 @@ export default {
   name: "SubFilter",
   emits: ["onFilterParamsChanged"],
   setup(props, { emit }) {
-    const { filters, updateSelectedFilters, filtersLoading } =
+    const route = useRoute();
+    const { filters, updateSelectedFilters, filtersLoading, getData } =
       useSubCategoryFilter(emit);
-
-    return { filters, updateSelectedFilters, filtersLoading };
+    getData(route.params.id);
+    return { filters, updateSelectedFilters, filtersLoading, getData };
   },
 };
 //获取筛选条件
 function useSubCategoryFilter(emit) {
   //  获取路由的信息对象
-  const route = useRoute();
+  // const route = useRoute();
   //  用于存储所以的筛选条件数据
   const filters = ref();
   //用于存储筛选数据的加载状态
@@ -73,26 +74,33 @@ function useSubCategoryFilter(emit) {
     brandId: null,
     attrs: [],
   });
-  //  获取筛选条件
-  getSubCategoryById(route.params.id).then((data) => {
-    filtersLoading.value = true;
-    //在品牌筛选条件的前面加上`全部`筛选选项
-    data.result.brands.unshift({ id: null, name: "全部" });
-    //  在其他的筛选的条件的前面的加上`全部`筛选选项
-    data.result.saleProperties.forEach((item) => {
-      item.properties.unshift({ id: null, name: "全部" });
-      //  用于存储用户选择的品牌id
-      item.selectedFilterName = "全部";
+  const getData = (id) => {
+    //  获取筛选条件的api
+    getSubCategoryById(id).then((data) => {
+      filtersLoading.value = true;
+      //在品牌筛选条件的前面加上`全部`筛选选项
+      data.result.brands.unshift({ id: null, name: "全部" });
+      //  在其他的筛选的条件的前面的加上`全部`筛选选项
+      data.result.saleProperties.forEach((item) => {
+        item.properties.unshift({ id: null, name: "全部" });
+        //  用于存储用户选择的品牌id
+        item.selectedFilterName = "全部";
+      });
+      //  存储筛选条件
+      filters.value = data.result;
+
+      //  用于用户选择的品牌id
+      data.result.selectedBrandId = null;
+      //  更新筛选数据的加载状态
+      filtersLoading.value = false;
     });
-    //  存储筛选条件
-    filters.value = data.result;
-    //  用于用户选择的品牌id
-    data.result.selectedBrandId = null;
-    //  更新筛选数据的加载状态
-    filtersLoading.value = false;
-  });
+  };
   //路由切换时获取筛选条件数据
-  onBeforeRouteUpdate((to) => getSubCategoryById(to.params.id));
+  onBeforeRouteUpdate((to) => {
+    // getSubCategoryById(to.params.id);
+    getData(to.params.id);
+    // useSubCategoryFilter(route.params.id, emit);
+  });
   //用于更新用户的筛选条件
   const updateSelectedFilters = () => {
     // console.log(filters.value.selectedBrandId, filters.value);
@@ -115,7 +123,7 @@ function useSubCategoryFilter(emit) {
     emit("onFilterParamsChanged", selectedFilters);
   };
 
-  return { filters, updateSelectedFilters, filtersLoading };
+  return { filters, updateSelectedFilters, filtersLoading, getData };
 }
 </script>
 <style scoped lang="less">

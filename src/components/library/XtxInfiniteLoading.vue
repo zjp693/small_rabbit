@@ -1,10 +1,10 @@
 <template>
   <div class="xtx-infinite-loading" ref="target">
-    <div class="loading">
+    <div class="loading" v-if="loading">
       <span class="img"></span>
       <span class="text">正在加载...</span>
     </div>
-    <div class="none">
+    <div class="none" v-if="finished">
       <span class="img"></span>
       <span class="text">亲，没有更多了</span>
     </div>
@@ -30,10 +30,10 @@ export default {
   },
   setup(props, { emit }) {
     //被监听元素
+
     const target = ref(null);
     //执行监听元素的操作
     useIntersectionObserver(target, ([{ isIntersecting }]) => {
-      console.log(1);
       //如果元素进入可视区
       if (isIntersecting) {
         //  如果没有正在加载并且还有数据可以加载

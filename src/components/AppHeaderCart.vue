@@ -1,15 +1,18 @@
 <template>
   <div class="cart">
-    <a class="curr" href="#">
+    <router-link class="curr" to="/cart">
       <i class="iconfont icon-cart"></i><em>{{ effectiveGoodsCount }}</em>
-    </a>
-    <div class="layer">
+    </router-link>
+    <div class="layer" v-if="effectiveGoodsCount > 0 && !isCarPage">
       <div class="list">
         <div class="item" v-for="goods in effectiveGoodsList" :key="goods.id">
           <RouterLink to="">
             <img :src="goods.picture" alt="" />
             <div class="center">
-              <p class="name ellipsis-2">{{ goods.name }}</p>
+              <router-link :to="`/goods/${goods.id}`">
+                <p class="name ellipsis-2">{{ goods.name }}</p>
+              </router-link>
+
               <p class="attr ellipsis">{{ goods.attrsText }}</p>
             </div>
             <div class="right">
@@ -28,21 +31,26 @@
           <p>共 {{ effectiveGoodsCount }} 件商品</p>
           <p>&yen;{{ effectiveGoodsPrice }}</p>
         </div>
-        <XtxButton type="plain">去购物车结算</XtxButton>
+        <XtxButton type="plain">
+          <RouterLink to="/cart">去购物车结算</RouterLink>
+        </XtxButton>
       </div>
     </div>
   </div>
 </template>
 <script>
 import { useStore } from "vuex";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import Message from "@/components/library/Message";
+import { onBeforeRouteUpdate, useRoute } from "vue-router";
 
 export default {
   name: "AppHeaderCart",
   setup() {
     //  获取store 对象
     const store = useStore();
+    //获取路由信息
+    const route = useRoute();
     // 获取可购买商品列表
     const effectiveGoodsList = computed(
       () => store.getters["cart/effectiveGoodsList"]
@@ -58,17 +66,22 @@ export default {
     // console.log(effectiveGoodsList, effectiveGoodsCount, effectiveGoodsPrice);
     //根据 skuId 删除购物车中的商品
     const deleteGoodsOfCartBySkuId = (skuId) => {
-      // console.log(1);
-      // console.log(skuId);
       store.dispatch("cart/deleteGoodsOfCartBySkuId", skuId).then(() => {
         Message({ type: "success", text: "购物车的商品删除成功" });
       });
     };
+    //是否为购物车页面
+    const isCarPage = ref(route.path === "/cart");
+    //路由更新时 判断是否为购物车
+    onBeforeRouteUpdate((to) => {
+      isCarPage.value = to.path === "/cart";
+    });
     return {
       effectiveGoodsList,
       effectiveGoodsCount,
       effectiveGoodsPrice,
       deleteGoodsOfCartBySkuId,
+      isCarPage,
     };
   },
 };

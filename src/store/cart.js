@@ -31,6 +31,7 @@ export default {
     },
   },
   actions: {
+    //  购物车添加商品
     addGoodsToCart({ rootState, commit }, goods) {
       //  如果要加入购物车的商品已经在购物车 累加该商品的数量
       //  新添加的商品放置在购物车列表的顶部
@@ -40,6 +41,16 @@ export default {
       } else {
         //未登录
         commit("addGoodsToCart", goods);
+      }
+    },
+    //  购物车删除商品
+    deleteGoodsOfCartBySkuId({ rootState, commit }, payload) {
+      //  判断用户是否已登录
+      if (rootState.user.profile.token) {
+        //  已登录
+      } else {
+        //  未登录
+        commit("deleteGoodsOfCartBySkuId", payload);
       }
     },
   },

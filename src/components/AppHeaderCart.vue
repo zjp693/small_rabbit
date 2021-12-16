@@ -17,7 +17,10 @@
               <p class="count">{{ goods.count }}</p>
             </div>
           </RouterLink>
-          <i class="iconfont icon-close-new"></i>
+          <i
+            @click="deleteGoodsOfCartBySkuId(goods.skuId)"
+            class="iconfont icon-close-new"
+          ></i>
         </div>
       </div>
       <div class="foot">
@@ -33,6 +36,7 @@
 <script>
 import { useStore } from "vuex";
 import { computed } from "vue";
+import Message from "@/components/library/Message";
 
 export default {
   name: "AppHeaderCart",
@@ -51,11 +55,20 @@ export default {
     const effectiveGoodsPrice = computed(
       () => store.getters["cart/effectiveGoodsPrice"]
     );
-    console.log(effectiveGoodsList, effectiveGoodsCount, effectiveGoodsPrice);
+    // console.log(effectiveGoodsList, effectiveGoodsCount, effectiveGoodsPrice);
+    //根据 skuId 删除购物车中的商品
+    const deleteGoodsOfCartBySkuId = (skuId) => {
+      // console.log(1);
+      // console.log(skuId);
+      store.dispatch("cart/deleteGoodsOfCartBySkuId", skuId).then(() => {
+        Message({ type: "success", text: "购物车的商品删除成功" });
+      });
+    };
     return {
       effectiveGoodsList,
       effectiveGoodsCount,
       effectiveGoodsPrice,
+      deleteGoodsOfCartBySkuId,
     };
   },
 };

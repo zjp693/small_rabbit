@@ -30,6 +30,7 @@ export default {
       //取反
       isChecked.value = !isChecked.value;
       // console.log(isChecked.value);
+      // console.log(isChecked.value);
       //  监听内部值的变化,将其同步给内部值
       // emit("update:modelValue", isChecked.value);
     };

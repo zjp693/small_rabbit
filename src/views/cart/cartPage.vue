@@ -10,7 +10,13 @@
           <table>
             <thead>
               <tr>
-                <th><XtxCheckbox>全选</XtxCheckbox></th>
+                <th>
+                  <XtxCheckbox
+                    :modelValue="selectAllButtonStatus"
+                    @update:modelValue="selectAllGoods($event)"
+                    >全选</XtxCheckbox
+                  >
+                </th>
                 <th>商品信息</th>
                 <th>单价</th>
                 <th>数量</th>
@@ -61,15 +67,24 @@
                 </td>
                 <td class="tc">
                   <p><a href="javascript:">移入收藏夹</a></p>
-                  <p><a class="green" href="javascript:">删除</a></p>
+                  <p>
+                    <a
+                      class="green"
+                      href="javascript:"
+                      @click="deleteGoodsOfCartBySkuId(goods.skuId)"
+                      >删除</a
+                    >
+                  </p>
                   <p><a href="javascript:">找相似</a></p>
                 </td>
               </tr>
             </tbody>
             <!-- 无效商品 -->
             <tbody>
-              <tr>
-                <td colspan="6"><h3 class="tit">失效商品</h3></td>
+              <tr v-if="effectiveGoodsCount === 0">
+                <td colspan="6">
+                  <EmptyCart></EmptyCart>
+                </td>
               </tr>
               <tr v-for="goods in invalidGoodsList" :key="goods.id">
                 <td></td>
@@ -124,14 +139,17 @@
 </template>
 <script>
 import GoodsRelevant from "@/views/goods/components/GoodsRelevant";
+2;
 import AppLayout from "@/components/AppLayout";
 
 import { computed } from "vue";
 import { useStore } from "vuex";
 import Message from "@/components/library/Message";
+import EmptyCart from "@/views/cart/components/EmptyCart";
+import Confirm from "@/components/library/Confirm";
 export default {
   name: "CartPage",
-  components: { GoodsRelevant, AppLayout },
+  components: { EmptyCart, GoodsRelevant, AppLayout },
   setup() {
     const store = useStore();
     // 获取有效商品列表
@@ -161,10 +179,39 @@ export default {
     //单选
     const selectGoods = (skuId, isSelected) => {
       //根据 skuId 更新单个商品信息
-      store.dispatch("cart/deleteGoodsOfCartBySkuId", {
+      store.dispatch("cart/updateGoodsOfCartBySkuId", {
         skuId,
         selected: isSelected,
       });
+    };
+    //全选
+    const selectAllButtonStatus = computed(
+      () => store.getters["cart/selectAllButtonStatus"]
+    );
+    //全选和全不选
+    const selectAllGoods = (isAll) => {
+      // console.log(isAll);
+      store.dispatch("cart/selectIsAll", isAll);
+    };
+    //删除 商品
+    const deleteGoodsOfCartBySkuId = (skuId) => {
+      // Confirm({
+      //   content: "您确定要删除该商品吗?",
+      //   onSureButtonClick: () => {
+      //     store.dispatch("cart/deleteGoodsOfCartBySkuId", skuId);
+      //   },
+      // });
+      Confirm({
+        content: "您确定要删除购物车中的该商品吗",
+      })
+        .then(() => {
+          console.log(1);
+          // 执行删除操作
+          store.dispatch("cart/deleteGoodsOfCartBySkuId", skuId);
+        })
+        .catch(() => {
+          alert("执行取消逻辑");
+        });
     };
     return {
       effectiveGoodsList,
@@ -173,6 +220,9 @@ export default {
       userSelectedGoodsCount,
       userSelectedGoodsPrice,
       selectGoods,
+      selectAllButtonStatus,
+      selectAllGoods,
+      deleteGoodsOfCartBySkuId,
     };
   },
 };
@@ -265,6 +315,13 @@ export default {
         line-height: 50px;
       }
     }
+  }
+}
+.xtx-confirm {
+  background: rgba(0, 0, 0, 0);
+  .wrapper {
+    transform: translate(-50%, -60%);
+    opacity: 0;
   }
 }
 </style>

@@ -18,7 +18,7 @@ export default {
         state.list[index].count += goods.count;
         //  将该商品添加到购物车的顶部
         state.list.unshift(state.list.splice(index, 1)[0]);
-        console.log(state.list);
+        // console.log(state.list);
       } else {
         //  不存在该商品  直接将商品添加到购物车列表的顶部
         state.list.unshift(goods);
@@ -34,12 +34,16 @@ export default {
     //  根据skuId 更新商品信息
     //  注意:partOfGoods 中必须有skuId,但是服务端返回的数据中是没有的
     updateGoodsBySkuId(state, partOfGoods) {
+      //  console.log(partOfGoods);
       //  根据 skuId 查找商品
-      let goods = state.list.find((item) => item.skuId === partOfGoods.skuId);
+      let index = state.list.findIndex(
+        (item) => item.skuId === partOfGoods.skuId
+      );
       //  商品存在
-      if (goods) {
-        goods = { ...goods, ...partOfGoods };
-      }
+      state.list[index] = {
+        ...state.list[index],
+        ...partOfGoods,
+      };
     },
   },
   actions: {
@@ -59,6 +63,7 @@ export default {
     deleteGoodsOfCartBySkuId({ rootState, commit }, payload) {
       //  判断用户是否已登录
       if (rootState.user.profile.token) {
+        console.log(payload);
         //  已登录
       } else {
         //  未登录
@@ -88,6 +93,7 @@ export default {
     },
     //  更新购物车商品（one ） (支持商品数量和选中状态)
     updateGoodsOfCartBySkuId({ commit, rootState }, goods) {
+      // console.log(goods);
       if (rootState.user.profile.token) {
         //  登录
       } else {
@@ -95,6 +101,19 @@ export default {
         commit("updateGoodsBySkuId", goods);
       }
     },
+    //  全选和全不选
+    selectIsAll({ rootState, getters, commit }, isAll) {
+      if (rootState.user.profile.token) {
+        //  登录
+      } else {
+        //  未登录
+        getters.effectiveGoodsList.forEach((item) => {
+          commit("updateGoodsBySkuId", { skuId: item.skuId, selected: isAll });
+          // console.log(isAll);
+        });
+      }
+    },
+    //  删除购物车 商品
   },
   getters: {
     //  可购买商品列表（有效商品 + 商品库存数量大于0）
@@ -136,6 +155,16 @@ export default {
           return price + Number(item.nowPrice) * item.count;
         }, 0)
         .toFixed(2);
+    },
+    // 全选、全不选按钮的状态
+    selectAllButtonStatus(state, getters) {
+      // 有效商品的数量和选中商品的数量相等意味着所有有效商品已选中
+      // 并且有效商品数量必须大于 0
+      return (
+        getters.effectiveGoodsList.length > 0 &&
+        getters.userSelectedGoodsList.length ===
+          getters.effectiveGoodsList.length
+      );
     },
   },
 };

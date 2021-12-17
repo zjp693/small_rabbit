@@ -138,7 +138,7 @@ export default {
         // 商品id
         id: goodsDetail.value.id,
         // 商品 skuId
-        skuId: goodsDetail.value.currentSkuId,
+        skuId: goodsDetail.value.currentSelectedSkuId,
         // 商品名称
         name: goodsDetail.value.name,
         // 商品规格属性文字

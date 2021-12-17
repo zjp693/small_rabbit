@@ -2,6 +2,8 @@
   <!--  <div classname="box">-->
   <RouterView></RouterView>
   <!--  </div>-->
+  <!--  <XtxConfirm title="测试标题" content="测试内容" />-->
+  <!--  <XtxConfirm></XtxConfirm>-->
   <!--  <button @click="showMessage">showMessage</button>-->
   <!--  <button @click="$message({ type: 'warn', text: '测试' })">buttton</button>-->
   <!--  <button @click="show">button</button>-->
@@ -9,6 +11,7 @@
 
 <script>
 import Message from "@/components/library/Message";
+// import XtxConfirm from "@/components/library/XtxConfirm";
 import { getCurrentInstance } from "vue";
 export default {
   setup() {

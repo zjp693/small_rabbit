@@ -114,6 +114,20 @@ export default {
       }
     },
     //  删除购物车 商品
+    //  删除用户选择的商品,清空无效商品
+    deleteGoodsOfCartByUserSelectedOrInvalid(
+      { getters, rootState, commit },
+      flag
+    ) {
+      if (rootState.user.profile.token) {
+        //  登录
+      } else {
+        //  未登录
+        getters[flag].forEach((item) => {
+          commit("deleteGoodsOfCartBySkuId", item.skuId);
+        });
+      }
+    },
   },
   getters: {
     //  可购买商品列表（有效商品 + 商品库存数量大于0）

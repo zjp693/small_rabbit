@@ -35,5 +35,10 @@ export default function Confirm({ title = "温馨提示", content }) {
       onCancelButtonClick: onCancelButtonClickHandler,
     });
     render(vNode, container);
+    //执行入场动画
+    setTimeout(() => {
+      vNode.el.classList.add("fade");
+      vNode.el.children[0].classList.add("fade");
+    });
   });
 }

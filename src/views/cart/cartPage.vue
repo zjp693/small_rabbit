@@ -58,7 +58,13 @@
                   </p>
                 </td>
                 <td class="tc">
-                  <XtxNumberBox></XtxNumberBox>
+                  <XtxNumberBox
+                    :max="goods.stock"
+                    :modelValue="goods.count"
+                    @update:modelValue="
+                      changeGoodsCountOfCartBySkuId(goods.skuId, $event)
+                    "
+                  ></XtxNumberBox>
                 </td>
                 <td class="tc">
                   <p class="f16 red">
@@ -120,9 +126,23 @@
         <div class="action">
           <div class="batch">
             <XtxCheckbox>全选</XtxCheckbox>
-            <a href="javascript:">删除商品</a>
+            <a
+              href="javascript:"
+              @click="
+                deleteGoodsOfCartByUserSelectedOrInvalid(
+                  'userSelectedGoodsList'
+                )
+              "
+              >删除商品</a
+            >
             <a href="javascript:">移入收藏夹</a>
-            <a href="javascript:">清空失效商品</a>
+            <a
+              href="javascript:"
+              @click="
+                deleteGoodsOfCartByUserSelectedOrInvalid('invalidGoodsList')
+              "
+              >清空失效商品</a
+            >
           </div>
           <div class="total">
             共 {{ effectiveGoodsCount }} 件商品，已选择
@@ -205,13 +225,49 @@ export default {
         content: "您确定要删除购物车中的该商品吗",
       })
         .then(() => {
-          console.log(1);
           // 执行删除操作
           store.dispatch("cart/deleteGoodsOfCartBySkuId", skuId);
         })
         .catch(() => {
           alert("执行取消逻辑");
         });
+    };
+    //批量删除用户选择的商品，清空无效商品
+    const deleteGoodsOfCartByUserSelectedOrInvalid = (flag) => {
+      //默认提示
+      let content = "";
+      // 如果当前操作是删除用户选择的商品
+      if (flag === "userSelectedGoodsList") {
+        // 判断用户是否选择了商品
+        if (userSelectedGoodsCount.value === 0) {
+          Message({ type: "error", text: "请选择要删除的商品" });
+          return;
+        }
+        // 设置弹框提示文字
+        content = "确定要删除选中的商品吗?";
+      }
+      // 如果当前操作是清空无效商品
+      if (flag === "invalidGoodsList") {
+        // 判断当前是否有无效商品
+        if (invalidGoodsList.value.length === 0) {
+          // 提示
+          Message({ type: "error", text: "没有无效商品" });
+          return;
+        }
+        // 设置弹框提示文字
+        content = "确定要删除无效商品吗?";
+      }
+      // 和用户进行确认
+      Confirm({ content })
+        .then(() => {
+          // 执行操作
+          store.dispatch("cart/deleteGoodsOfCartByUserSelectedOrInvalid", flag);
+        })
+        .catch(() => {});
+    };
+    // 更改购物车中的商品数量
+    const changeGoodsCountOfCartBySkuId = (skuId, count) => {
+      store.dispatch("cart/updateGoodsOfCartBySkuId", { skuId, count });
     };
     return {
       effectiveGoodsList,
@@ -223,6 +279,8 @@ export default {
       selectAllButtonStatus,
       selectAllGoods,
       deleteGoodsOfCartBySkuId,
+      deleteGoodsOfCartByUserSelectedOrInvalid,
+      changeGoodsCountOfCartBySkuId,
     };
   },
 };

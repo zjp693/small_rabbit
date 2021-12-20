@@ -1,4 +1,4 @@
-import { updateLocalCart } from "@/api/cart";
+import { getCartList, mergeCart, updateLocalCart } from "@/api/cart";
 
 export default {
   namespaced: true,
@@ -45,6 +45,10 @@ export default {
         ...partOfGoods,
       };
     },
+    //  设置购物车列表
+    setCart(state, payload) {
+      state.list = payload;
+    },
   },
   actions: {
     //  购物车添加商品
@@ -71,9 +75,13 @@ export default {
       }
     },
     //  更新购物车的商品
-    updateCartList({ rootState, state, commit }) {
+    async updateCartList({ rootState, state, commit }) {
       if (rootState) {
         //  登录
+        // 获取服务器端购物车列表数据
+        let data = await getCartList();
+        //  将服务端购物车列表存储到 vuex 中
+        commit("setCart", data.result);
       } else {
         //  未登录
         //  遍历购物车中的商品 发送请求获取该商品的最新消息
@@ -101,6 +109,33 @@ export default {
         commit("updateGoodsBySkuId", goods);
       }
     },
+    // 商品规格信息发生变化, 更新商品信息
+    updateGoodsOfCartBySkuChanged(
+      { rootState, state, commit },
+      { oldSkuId, userSelectedNewSku }
+    ) {
+      if (rootState.user.profile.token) {
+        //  登录
+      } else {
+        //  未登录
+        //  先根据旧的skuID 查找商品，根据旧的商品生成新的商品 输出旧的商品，插入新的商品
+        //  查找旧商品
+        const oldGoods = state.list.find((item) => item.skuId === oldSkuId);
+        //  生成新的商品
+        const newGoods = {
+          ...oldGoods,
+          skuId: userSelectedNewSku.skuId,
+          stock: userSelectedNewSku.inventory,
+          oldPrice: userSelectedNewSku.oldPrice,
+          nowPrice: userSelectedNewSku.price,
+          attrsText: userSelectedNewSku.specsText,
+        };
+        // 删除旧的商品
+        commit("deleteGoodsOfCartBySkuId", oldSkuId);
+        //  插入新的商品
+        commit("addGoodsToCart", newGoods);
+      }
+    },
     //  全选和全不选
     selectIsAll({ rootState, getters, commit }, isAll) {
       if (rootState.user.profile.token) {
@@ -113,7 +148,6 @@ export default {
         });
       }
     },
-    //  删除购物车 商品
     //  删除用户选择的商品,清空无效商品
     deleteGoodsOfCartByUserSelectedOrInvalid(
       { getters, rootState, commit },
@@ -126,6 +160,26 @@ export default {
         getters[flag].forEach((item) => {
           commit("deleteGoodsOfCartBySkuId", item.skuId);
         });
+      }
+    },
+    //  合并购物车
+    async mergeCart({ state, commit }) {
+      //如果本地购物车中没有数据 不用进行合并
+      if (state.list.length === 0) return;
+      //  准备合并购物车接口所需的数据
+      const carts = state.list.map((item) => ({
+        skuId: item.skuId,
+        selected: item.selected,
+        count: item.count,
+      }));
+      try {
+        //  合并购物车
+        await mergeCart(carts);
+        //  清空本地购物车
+        commit("setCart", []);
+      } catch (error) {
+        //  购物车合并失败 抛出异常
+        throw new Error(error);
       }
     },
   },

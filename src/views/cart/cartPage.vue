@@ -24,6 +24,8 @@
                 <th>操作</th>
               </tr>
             </thead>
+
+            <CartSku v-if="(good = false)"></CartSku>
             <!-- 有效商品 -->
             <tbody>
               <tr v-for="goods in effectiveGoodsList" :key="goods.id">
@@ -43,6 +45,10 @@
                         {{ goods.name }}
                       </p>
                       <!-- 选择规格组件 -->
+                      <CartSku
+                        :attrsText="goods.attrsText"
+                        :skuId="goods.skuId"
+                      />
                     </div>
                   </div>
                 </td>
@@ -159,17 +165,16 @@
 </template>
 <script>
 import GoodsRelevant from "@/views/goods/components/GoodsRelevant";
-2;
 import AppLayout from "@/components/AppLayout";
-
 import { computed } from "vue";
 import { useStore } from "vuex";
 import Message from "@/components/library/Message";
 import EmptyCart from "@/views/cart/components/EmptyCart";
 import Confirm from "@/components/library/Confirm";
+import CartSku from "@/views/cart/components/CartSku";
 export default {
   name: "CartPage",
-  components: { EmptyCart, GoodsRelevant, AppLayout },
+  components: { CartSku, EmptyCart, GoodsRelevant, AppLayout },
   setup() {
     const store = useStore();
     // 获取有效商品列表

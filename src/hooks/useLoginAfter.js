@@ -8,7 +8,7 @@ export default function useLoginAfter() {
   // 获取 router 对象
   const router = useRouter();
   // 登录成功之后做的事情
-  const loginSuccessful = ({ result }) => {
+  const loginSuccessful = async ({ result }) => {
     // 存储用户信息
     store.commit("user/setUser", {
       // 用户id
@@ -29,6 +29,10 @@ export default function useLoginAfter() {
       // 登录成功之后的提示信息
       Message({ type: "success", text: "登录成功" });
     });
+    //  合并购物车
+    await store.dispatch("cart/mergeCart");
+    // 将服务器端购物车数据同步到本地;
+    await store.dispatch("cart/updateCartList");
   };
   // 登录失败之后做的事情
   const loginFailed = (error) => {

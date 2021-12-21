@@ -6,8 +6,10 @@ const SubCategoryPage = () => import("@/views/category/SubCategoryPage");
 const GoodsDetailPage = () => import("@/views/goods/GoodsDetailPage");
 const LoginCallbackPage = () => import("@/views/login/LoginCallbackPage");
 const CartPage = () => import("@/views/cart/cartPage");
+
 import authGuard from "@/router/authGuard";
 import LoginPage from "@/views/login/LoginPage";
+import CheckoutPage from "@/views/pay/CheckoutPage";
 const routes = [
   {
     path: "/",
@@ -32,6 +34,10 @@ const routes = [
   {
     path: "/login/callback",
     component: LoginCallbackPage,
+  },
+  {
+    path: "/checkout/order",
+    component: CheckoutPage,
   },
   { path: "/cart", component: CartPage },
 ];

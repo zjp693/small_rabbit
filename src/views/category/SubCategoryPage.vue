@@ -127,6 +127,7 @@ function uesGoods() {
   const getGoods = () => {
     //  获取商品数据
     getGoodsList(reqParams.value).then((data) => {
+      console.log(data.result);
       //如果当前不是第一页，直接赋值
       if (reqParams.value.page === 1) {
         result.value = data.result;
@@ -135,9 +136,9 @@ function uesGoods() {
       } else {
         //  如果当前不是第一页，做商品列表数据的累加
         result.value = {
-          ...data.result,
-          item: [...result.value.items, ...data.result.items],
+          items: [...data.result.items, ...data.result.items],
         };
+        console.log(result.value);
       }
       //  如果当前页是最后一页
       if (reqParams.value.page === data.result.page) {

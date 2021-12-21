@@ -6,6 +6,7 @@ const SubCategoryPage = () => import("@/views/category/SubCategoryPage");
 const GoodsDetailPage = () => import("@/views/goods/GoodsDetailPage");
 const LoginCallbackPage = () => import("@/views/login/LoginCallbackPage");
 const CartPage = () => import("@/views/cart/cartPage");
+import authGuard from "@/router/authGuard";
 import LoginPage from "@/views/login/LoginPage";
 const routes = [
   {
@@ -41,4 +42,6 @@ const router = createRouter({
   routes,
 });
 
+//检测用户是否登录
+router.beforeEach(authGuard);
 export default router;

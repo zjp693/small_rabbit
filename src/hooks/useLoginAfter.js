@@ -33,6 +33,10 @@ export default function useLoginAfter() {
     await store.dispatch("cart/mergeCart");
     // 将服务器端购物车数据同步到本地;
     await store.dispatch("cart/updateCartList");
+    // 跳转目标地址
+    const redirectURL = router.query.redirectURL;
+    // 跳转到首页或目标页
+    router.push(redirectURL || "/").then(() => {});
   };
   // 登录失败之后做的事情
   const loginFailed = (error) => {

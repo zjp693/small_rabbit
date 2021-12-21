@@ -97,6 +97,7 @@ export default {
       ) {
         //  用户提示
         Message({ type: "warn", text: "商品规格信息没有发生变化" });
+        return;
       }
       store
         .dispatch("cart/updateGoodsOfCartBySkuChanged", {

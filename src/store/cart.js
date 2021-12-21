@@ -1,4 +1,12 @@
-import { getCartList, mergeCart, updateLocalCart } from "@/api/cart";
+import {
+  addGoodsToCart,
+  deleteGoodsOfCartBySkuIds,
+  getCartList,
+  mergeCart,
+  selectOrUnselectCartGoods,
+  updateGoodsOfCartBySkuId,
+  updateLocalCart,
+} from "@/api/cart";
 
 export default {
   namespaced: true,
@@ -52,23 +60,32 @@ export default {
   },
   actions: {
     //  购物车添加商品
-    addGoodsToCart({ rootState, commit }, goods) {
+    async addGoodsToCart({ rootState, commit, dispatch }, goods) {
       //  如果要加入购物车的商品已经在购物车 累加该商品的数量
       //  新添加的商品放置在购物车列表的顶部
       //  判断用户是否登录，如果登录 操作服务端购物车 如果没有登录 操作本地购物车
       if (rootState.user.profile.token) {
         //  已登录
+        await addGoodsToCart({
+          skuId: goods.skuId,
+          count: goods.count,
+        });
+        //更新
+        // 更新购物车列表
+        dispatch("updateCartList");
       } else {
         //未登录
         commit("addGoodsToCart", goods);
       }
     },
     //  购物车删除商品
-    deleteGoodsOfCartBySkuId({ rootState, commit }, payload) {
+    async deleteGoodsOfCartBySkuId({ rootState, commit, dispatch }, payload) {
       //  判断用户是否已登录
       if (rootState.user.profile.token) {
-        console.log(payload);
         //  已登录
+        await deleteGoodsOfCartBySkuIds([payload]);
+        //  商品列表
+        dispatch("updateCartList");
       } else {
         //  未登录
         commit("deleteGoodsOfCartBySkuId", payload);
@@ -100,22 +117,33 @@ export default {
       }
     },
     //  更新购物车商品（one ） (支持商品数量和选中状态)
-    updateGoodsOfCartBySkuId({ commit, rootState }, goods) {
+    async updateGoodsOfCartBySkuId({ commit, rootState, dispatch }, goods) {
       // console.log(goods);
       if (rootState.user.profile.token) {
         //  登录
+        //  更新商品信息
+        await updateGoodsOfCartBySkuId(goods);
+        //更新购物车列表
+        dispatch("updateCartList");
       } else {
         //  未登录
         commit("updateGoodsBySkuId", goods);
       }
     },
     // 商品规格信息发生变化, 更新商品信息
-    updateGoodsOfCartBySkuChanged(
+    async updateGoodsOfCartBySkuChanged(
       { rootState, state, commit },
       { oldSkuId, userSelectedNewSku }
     ) {
       if (rootState.user.profile.token) {
         //  登录
+        //  查找原有商品信息，通过原有商品信息获取用户选择的商品数据
+        const oldGoods = state.list.find((item) => item.skuId === oldSkuId);
+        //  删除原有商品
+        await addGoodsToCart({
+          skuId: userSelectedNewSku.skuId,
+          count: oldGoods.count,
+        });
       } else {
         //  未登录
         //  先根据旧的skuID 查找商品，根据旧的商品生成新的商品 输出旧的商品，插入新的商品
@@ -137,9 +165,15 @@ export default {
       }
     },
     //  全选和全不选
-    selectIsAll({ rootState, getters, commit }, isAll) {
+    async selectIsAll({ rootState, getters, commit, dispatch }, isAll) {
       if (rootState.user.profile.token) {
         //  登录
+        //获取商品 sukId 数组
+        const ids = getters.effectiveGoodsList.map((item) => item.skuId);
+        // 发送请求全选或者全不选
+        await selectOrUnselectCartGoods({ ids, selected: isAll });
+        //更新购物车商品列表
+        dispatch("updateCartList");
       } else {
         //  未登录
         getters.effectiveGoodsList.forEach((item) => {
@@ -149,12 +183,18 @@ export default {
       }
     },
     //  删除用户选择的商品,清空无效商品
-    deleteGoodsOfCartByUserSelectedOrInvalid(
-      { getters, rootState, commit },
+    async deleteGoodsOfCartByUserSelectedOrInvalid(
+      { getters, rootState, commit, dispatch },
       flag
     ) {
       if (rootState.user.profile.token) {
         //  登录
+        //  获取要批量的删除商品的 skuId 数组
+        const skuId = getters[flag].map((item) => item.skuId);
+        // 发送请求 批量删除商品
+        await deleteGoodsOfCartBySkuIds(skuId);
+        //  更新商品列表
+        dispatch("updateCartList");
       } else {
         //  未登录
         getters[flag].forEach((item) => {

@@ -43,6 +43,8 @@ export default {
     const logout = () => {
       store.commit("user/setUser", {});
       router.push("/login");
+      //清空购物车
+      store.commit("cart/setCart", []);
     };
     return { user, logout };
   },

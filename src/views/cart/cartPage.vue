@@ -154,7 +154,9 @@
             共 {{ effectiveGoodsCount }} 件商品，已选择
             {{ userSelectedGoodsCount }} 件，商品合计：
             <span class="red">¥{{ userSelectedGoodsPrice }}</span>
-            <XtxButton type="primary">下单结算</XtxButton>
+            <XtxButton @click="jumpToCheckout" type="primary"
+              >下单结算</XtxButton
+            >
           </div>
         </div>
         <!-- 猜你喜欢 -->
@@ -172,11 +174,15 @@ import Message from "@/components/library/Message";
 import EmptyCart from "@/views/cart/components/EmptyCart";
 import Confirm from "@/components/library/Confirm";
 import CartSku from "@/views/cart/components/CartSku";
+import { useRouter } from "vue-router";
 export default {
   name: "CartPage",
   components: { CartSku, EmptyCart, GoodsRelevant, AppLayout },
   setup() {
+    //获取 vuex 数据
     const store = useStore();
+    // 获取 路由信息
+    const router = useRouter();
     // 获取有效商品列表
     const effectiveGoodsList = computed(
       () => store.getters["cart/effectiveGoodsList"]
@@ -274,6 +280,15 @@ export default {
     const changeGoodsCountOfCartBySkuId = (skuId, count) => {
       store.dispatch("cart/updateGoodsOfCartBySkuId", { skuId, count });
     };
+    //下单结算按钮
+    const jumpToCheckout = () => {
+      //  判断用户是否选择了商品
+      if (userSelectedGoodsCount.value === 0) {
+        return Message({ type: "error", text: "请至少选择一件商品" });
+      }
+      router.push("/checkout/order");
+    };
+
     return {
       effectiveGoodsList,
       effectiveGoodsCount,
@@ -286,6 +301,7 @@ export default {
       deleteGoodsOfCartBySkuId,
       deleteGoodsOfCartByUserSelectedOrInvalid,
       changeGoodsCountOfCartBySkuId,
+      jumpToCheckout,
     };
   },
 };

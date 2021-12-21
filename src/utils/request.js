@@ -60,10 +60,12 @@ export function generateRequestConfig(url, method, data) {
     [method === "get" ? "params" : "data"]: data,
   };
 }
+
 //用于发送携带token的请求
 export function requestWithToken(url, method, data) {
   return instanceWithToken(generateRequestConfig(url, method, data));
 }
+
 //用于发送 未携带token的普通请求
 export function requestWithOutToken(url, method, data) {
   return instanceWithoutToken(generateRequestConfig(url, method, data));

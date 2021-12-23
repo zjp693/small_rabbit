@@ -54,12 +54,8 @@ export default {
     fade: {
       mounted(el) {
         setTimeout(() => {
-          console.log(1);
           el.classList.add("fade");
         }, 0);
-        // requestAnimationFrame(() => {
-        //   el.classList.add("fade");
-        // });
       },
     },
   },

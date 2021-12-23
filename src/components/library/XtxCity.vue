@@ -29,6 +29,11 @@ import { onClickOutside } from "@vueuse/core";
 
 export default {
   name: "XtxCity",
+  props: {
+    location: {
+      type: String,
+    },
+  },
   setup(props, { emit }) {
     // 控制下拉菜单的是否显示
     const visible = ref(false);
@@ -78,7 +83,7 @@ export default {
       location: "",
     });
     //用于展示用户的省市区
-    const location = ref(null);
+    // const location = ref(null);
     //用于供城市选择城市数据的放大
     const updateSelectedCityData = (data) => {
       // 存储省级数据
@@ -132,7 +137,7 @@ export default {
       selectedCityData,
       updateSelectedCityData,
       list,
-      location,
+      // location,
     };
   },
 };

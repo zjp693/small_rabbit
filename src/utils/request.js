@@ -4,7 +4,7 @@ import router from "@/router";
 // 线上环境: https://apipc-xiaotuxian-front.itheima.net/
 // 开发环境: http://pcapi-xiaotuxian-front-devtest.itheima.net/
 //2.创建baseURL 变量泳衣存储基准的请求地址
-const baseURL = "http://pcapi-xiaotuxian-front-devtest.itheima.net/";
+export const baseURL = "http://pcapi-xiaotuxian-front-devtest.itheima.net/";
 //1.创建一个新的axios 实例对象，专门用于配置和小兔鲜应用相关的请求
 //创建请求实例（携带token）
 const instanceWithToken = axios.create({ baseURL });

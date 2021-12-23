@@ -1,7 +1,7 @@
 <template>
   <XtxDialog
     v-model:visible="visible"
-    :title="`${address?.id ? '修改' : '添加'}收货地址`"
+    :title="`${address.id ? '修改' : '添加'}收货地址`"
   >
     <template v-slot:default>
       <div class="address-edit">
@@ -107,11 +107,7 @@ export default {
     //用于存储用户选择的城市文字信息
     const location = ref();
     //用户存储用户最终填写的收货地址
-    const address = ref({
-      provinceCode: "",
-      cityCode: "",
-      countyCode: "",
-    });
+    const address = ref({});
     //城市信息发生改变时
     const onCityChanged = (city) => {
       // 存储城市文字信息
@@ -132,9 +128,7 @@ export default {
       if (target.id) {
         try {
           // 向服务器端发送请求修改收货地址
-          console.log(target);
           const data = await updateAddressById(target);
-          console.log(data);
           // 收货地址添加成功之后的提示
           Message({ type: "success", text: "收货地址修改成功" });
           //关闭对话框
@@ -148,6 +142,7 @@ export default {
       } else {
         try {
           // 向服务器端发送请求 添加收货地址
+          console.log(1);
           let data = await addAddress(target);
           //  收货地址添加成功之后的提示
           Message({ type: "success", text: "收货地址添加成功" });
@@ -157,6 +152,7 @@ export default {
           // 将新的收货地址的id传递到父组件
           emit("onAddressChanged", data.result.id);
         } catch (err) {
+          console.log(2222222);
           Message({ type: "error", text: "收货地址添加失败" });
         }
       }

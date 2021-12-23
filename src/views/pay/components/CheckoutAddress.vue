@@ -11,7 +11,7 @@
         <li>
           <span>联系方式：</span
           >{{
-            finalAddress.contact.replace(/(\d{3})\d{4}(\d{5})/g, `$1****$2`)
+            finalAddress.contact.replace(/(\d{3})\d{4}(\d{4})/g, `$1****$3`)
           }}
         </li>
         <li>
@@ -24,12 +24,18 @@
     </div>
     <div class="action">
       <XtxButton class="btn" @click="switchAddress">切换地址</XtxButton>
-      <AddressSwitch :activeAddressId="finalAddress?.id"></AddressSwitch>
+      <AddressSwitch
+        ref="addressSwitchInstance"
+        :activeAddressId="finalAddress?.id"
+        :list="addresses"
+      ></AddressSwitch>
       <XtxButton class="btn" @click="addAddress">添加地址</XtxButton>
-      <AddressEdit ref="addressSwitchInstance" :list="addresses"></AddressEdit>
+      <AddressEdit
+        ref="addressEditInstance"
+        @onAddressChanged="updateUserSelectedAddress($event)"
+      ></AddressEdit>
     </div>
   </div>
-  <AddressEdit @onAddressChanged="updateUserSelectedAddress($event)" />
 </template>
 <script>
 import AddressEdit from "@/views/pay/components/AddressEdit";
@@ -44,10 +50,13 @@ export default {
     const { finalAddress, addresses } = getAddresses();
     //用于存储编辑收货地址 组件实例对象
     const addressEditInstance = ref();
+    // 获取切换收货地址组件的实例对象
+    const addressSwitchInstance = ref();
     //添加收货地址
     const addAddress = () => {
       //打开对话框
       addressEditInstance.value.visible = true;
+      addressEditInstance.value.location = "";
       // 在每一次点击添加收货地址按钮的时候 清空表单
       addressEditInstance.value.address = {
         // 收货人姓名
@@ -72,19 +81,22 @@ export default {
     };
     //修改地址
     const modifyAddress = () => {
+      console.log(addressEditInstance);
       // 获取当前要修改的收货地址信息
       const { fullLocation, isDefault, ...rest } = finalAddress.value;
       // 将要修改的收货地址信息显示在弹层中
-      addressEditInstance.value.location = fullLocation;
+      setTimeout(() => {
+        addressEditInstance.value.location = fullLocation;
+      }, 0);
+
       addressEditInstance.value.address = { ...rest };
       addressEditInstance.value.address.isDefault = isDefault === 0;
       // 显示弹层
       addressEditInstance.value.visible = true;
     };
-    //切换收货的地址
+    //切换收货的地址k949191
     const switchAddress = () => {
-      console.log(addressEditInstance);
-      addressEditInstance.value.visible = true;
+      addressSwitchInstance.value.visible = true;
     };
     return {
       addressEditInstance,
@@ -93,6 +105,7 @@ export default {
       modifyAddress,
       switchAddress,
       addresses,
+      addressSwitchInstance,
     };
   },
 };
@@ -102,6 +115,15 @@ function getAddresses() {
   const addresses = ref(null);
   //用于存储用户新增的收货地址或者切换的收货地址
   const userSelectedAddress = ref();
+  //  用于获取收货地址
+  const getData = () => {
+    //获取并存储收获地址
+    getAddressList().then((data) => {
+      addresses.value = data.result;
+    });
+  };
+  // 初始获取收货地址列表
+  getData();
   const finalAddress = computed(() => {
     let result = null;
     //  如果用户添加了新收货地址 或者切换了收货地址
@@ -122,15 +144,7 @@ function getAddresses() {
     }
     return result;
   });
-  //  用于获取收货地址
-  const getData = () => {
-    //获取并存储收获地址
-    getAddressList().then((data) => {
-      addresses.value = data.result;
-    });
-  };
-  // 初始获取收货地址列表
-  getData();
+
   // 用于更新用户添加的收货地址或者切换的收货地址
   const updateUserSelectedAddress = (id) => {
     getData(() => {
@@ -140,7 +154,7 @@ function getAddresses() {
     });
   };
   // 返回收货地址列表
-  return { finalAddress, updateUserSelectedAddress };
+  return { finalAddress, updateUserSelectedAddress, addresses };
 }
 </script>
 <style scoped lang="less">

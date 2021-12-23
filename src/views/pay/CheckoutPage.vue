@@ -11,7 +11,7 @@
           <!-- 收货地址 -->
           <h3 class="box-title">收货地址</h3>
           <div class="box-body">
-            <CheckoutAddress></CheckoutAddress>
+            <CheckoutAddress ref="checkoutAddressInstance"></CheckoutAddress>
           </div>
           <!-- 商品信息 -->
           <h3 class="box-title">商品信息</h3>
@@ -87,7 +87,7 @@
           </div>
           <!-- 提交订单 -->
           <div class="submit">
-            <XtxButton type="primary">提交订单</XtxButton>
+            <XtxButton type="primary" @click="referOrder">提交订单</XtxButton>
           </div>
         </div>
       </div>
@@ -97,15 +97,19 @@
 <script>
 import AppLayout from "@/components/AppLayout";
 import { ref } from "vue";
-import { createOrder } from "@/api/order";
+import { createOrder, submitOrder } from "@/api/order";
 import CheckoutAddress from "@/views/pay/components/CheckoutAddress";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import Message from "@/components/library/Message";
 export default {
   name: "CheckoutPage",
   components: { CheckoutAddress, AppLayout },
   setup() {
     const { order } = getOrderInfo();
-    // const { userSelectedAddress } = getAddresses();
-    return { order };
+    // 获取订单信息
+    const { referOrder, checkoutAddressInstance } = getOrderInfo();
+    return { order, referOrder, checkoutAddressInstance };
   },
 };
 
@@ -113,25 +117,64 @@ export default {
 function getOrderInfo() {
   //  用于存储订单信息
   const order = ref(null);
+  //收货地址组件实例对象
+  const checkoutAddressInstance = ref();
+  //获取路由对象
+  const router = useRouter();
+  //获取store 对象
+  const store = useStore();
+  //提交订单
+  const referOrder = () => {
+    //  订单对象
+    const orderParams = {
+      // 买家留言
+      buyerMessage: "",
+      // 支付渠道 1 为在线支付
+      payChannel: 1,
+      // 支付方式 1 支付宝
+      payType: 1,
+      // 配送时间 1 不限
+      deliveryTimeType: 1,
+      // 收货地址 id
+      addressId: checkoutAddressInstance.value.finalAddress?.id,
+      // 商品集合
+      goods: order.value.goods.map((item) => ({
+        count: item.count,
+        skuId: item.skuId,
+      })),
+    };
+    // 判断用户是否选择了收货地址
+    if (!orderParams.addressId) {
+      return Message({ type: "error", text: "请选择收货地址" });
+    }
+    //  提交订单
+    submitOrder(orderParams)
+      .then((data) => {
+        // 订单提交成功之后跳转到支付页面
+        // 为什么要传递将订单ID?
+        // 在支付页面要根据订单ID查询并显示和订单相关的一些信息, 比如支付总金额等
+        router.push({
+          path: "/checkout/pay",
+          query: { orderId: data.result.id },
+        });
+        // 更新购物车列表
+        // 订单提交后, 购物车就没有数据了, 此时我们要将服务器端购物车状态同步到本地购物车
+        store.dispatch("cart/updateCartList");
+      })
+      .catch(() => {
+        Message({ type: "error", text: "订单提交失败" });
+      });
+  };
   //  用于创建订单并存储订单信息
   createOrder().then((data) => (order.value = data.result));
   //  返回订单信息
-  return { order };
+  return {
+    order,
+    referOrder,
+    checkoutAddressInstance,
+  };
 }
-
-// //获取收货地址
-// function getAddresses() {
-//   //  用于更新用户添加的收货地址或者切换的收货地址
-//   const updateUserSelectedAddress = (id) => {
-//     getData(() => {
-//       userSelectedAddress.value = getAddressList.value.find(
-//         (item) => item.id === id
-//       );
-//     });
-//   };
-//   getData();
-//   return { updateUserSelectedAddress };
-// }
+//提交订单
 </script>
 <style scoped lang="less">
 .xtx-pay-checkout-page {

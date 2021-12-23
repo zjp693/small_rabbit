@@ -31,3 +31,20 @@ export function getAddressList() {
 export function updateAddressById(address) {
   return requestWithToken(`/member/address/${address.id}`, "put", address);
 }
+
+/**
+ * 提交订单
+ * @param order 订单对象
+ * @return {AxiosPromise}
+ */
+export function submitOrder(order) {
+  return requestWithToken("/member/order", "post", order);
+}
+/**
+ * 根据订单id获取订单详情
+ * @param id 订单ID
+ * @return {AxiosPromise}
+ */
+export function getOrderInfoById(id) {
+  return requestWithToken(`/member/order/${id}`, "get");
+}

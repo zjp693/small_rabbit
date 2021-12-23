@@ -3,6 +3,7 @@
     <template v-slot:default>
       <div class="address-switch">
         <div
+          class="text item"
           :class="{ active: item.id === activeAddressId }"
           @click="onAddressSwitchHandler(item.id)"
           v-for="item in list"
@@ -46,12 +47,14 @@ export default {
     },
   },
   setup(props, { emit }) {
+    setTimeout(() => {
+      console.log(props.list);
+    }, 1000);
     const visible = ref(false);
     const onAddressSwitchHandler = (id) => {
-      console.log(id);
       emit("onAddressChanged", id);
       //  关闭对话框
-      // visible.value = false;
+      visible.value = false;
     };
     return { visible, onAddressSwitchHandler };
   },

@@ -30,9 +30,16 @@ export default function useLoginAfter() {
       Message({ type: "success", text: "登录成功" });
     });
     //  合并购物车
-    await store.dispatch("cart/mergeCart");
-    // 将服务器端购物车数据同步到本地;
-    await store.dispatch("cart/updateCartList");
+    await store
+      .dispatch("cart/mergeCart")
+      .then(() => {
+        // 将服务器端购物车数据同步到本地;
+        return store.dispatch("cart/updateCartList");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     // 跳转目标地址
     const redirectURL = router.query.redirectURL;
     // 跳转到首页或目标页

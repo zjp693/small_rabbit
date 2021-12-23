@@ -7,6 +7,13 @@
   <!--  <button @click="showMessage">showMessage</button>-->
   <!--  <button @click="$message({ type: 'warn', text: '测试' })">buttton</button>-->
   <!--  <button @click="show">button</button>-->
+  <!--  <XtxDialog title="对话框标题">-->
+  <!--    <template v-slot:default> 对话框中的提示信息 </template>-->
+  <!--    <template v-slot:footer>-->
+  <!--      <XtxButton type="gray" style="margin-right: 20px">取消</XtxButton>-->
+  <!--      <XtxButton type="primary">确认</XtxButton>-->
+  <!--    </template>-->
+  <!--  </XtxDialog>-->
 </template>
 
 <script>

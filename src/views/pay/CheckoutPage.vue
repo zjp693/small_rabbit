@@ -11,25 +11,7 @@
           <!-- 收货地址 -->
           <h3 class="box-title">收货地址</h3>
           <div class="box-body">
-            <div class="address">
-              <div class="text">
-                <!-- <div class="none">您需要先添加收货地址才可提交订单。</div> -->
-                <ul>
-                  <li>
-                    <span>收<i />货<i />人：</span>朱超
-                  </li>
-                  <li><span>联系方式：</span>132****2222</li>
-                  <li>
-                    <span>收货地址：</span>海南省三亚市解放路108号物质大厦1003室
-                  </li>
-                </ul>
-                <a href="javascript:">修改地址</a>
-              </div>
-              <div class="action">
-                <XtxButton class="btn">切换地址</XtxButton>
-                <XtxButton class="btn">添加地址</XtxButton>
-              </div>
-            </div>
+            <CheckoutAddress></CheckoutAddress>
           </div>
           <!-- 商品信息 -->
           <h3 class="box-title">商品信息</h3>
@@ -87,7 +69,7 @@
             <div class="total">
               <dl>
                 <dt>商品件数：</dt>
-                <dd>{{ order.summary.goodsCount }}件</dd>
+                <dd>{{ order.summary.goodsCFount }}件</dd>
               </dl>
               <dl>
                 <dt>商品总价：</dt>
@@ -116,25 +98,40 @@
 import AppLayout from "@/components/AppLayout";
 import { ref } from "vue";
 import { createOrder } from "@/api/order";
+import CheckoutAddress from "@/views/pay/components/CheckoutAddress";
 export default {
   name: "CheckoutPage",
-  components: { AppLayout },
+  components: { CheckoutAddress, AppLayout },
   setup() {
     const { order } = getOrderInfo();
+    // const { userSelectedAddress } = getAddresses();
     return { order };
   },
 };
+
+//订单信息
 function getOrderInfo() {
   //  用于存储订单信息
   const order = ref(null);
   //  用于创建订单并存储订单信息
   createOrder().then((data) => (order.value = data.result));
-  setTimeout(() => {
-    console.log(order);
-  }, 1000);
   //  返回订单信息
   return { order };
 }
+
+// //获取收货地址
+// function getAddresses() {
+//   //  用于更新用户添加的收货地址或者切换的收货地址
+//   const updateUserSelectedAddress = (id) => {
+//     getData(() => {
+//       userSelectedAddress.value = getAddressList.value.find(
+//         (item) => item.id === id
+//       );
+//     });
+//   };
+//   getData();
+//   return { updateUserSelectedAddress };
+// }
 </script>
 <style scoped lang="less">
 .xtx-pay-checkout-page {

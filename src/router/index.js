@@ -11,6 +11,8 @@ import authGuard from "@/router/authGuard";
 import LoginPage from "@/views/login/LoginPage";
 import CheckoutPage from "@/views/pay/CheckoutPage";
 const PayResultPage = () => import("@/views/pay/PayResultPage");
+const MemberHomePage = () => import("@/views/member/home/MemberHomePage");
+const OrderDetailPage = () => import("@/views/member/order/OrderDetailPage");
 const routes = [
   {
     path: "/",
@@ -48,6 +50,14 @@ const routes = [
   {
     path: "/pay/callback",
     component: PayResultPage,
+  },
+  {
+    path: "/member/home",
+    component: MemberHomePage,
+  },
+  {
+    path: "/member/order/:id",
+    component: OrderDetailPage,
   },
 ];
 

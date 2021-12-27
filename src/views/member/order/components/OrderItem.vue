@@ -62,9 +62,15 @@
         <p>
           <router-link :to="`/member/order/${order.id}`">查看详情</router-link>
         </p>
-        <p v-if="order.orderState === 1"><a href="javascript:">取消订单</a></p>
+        <p v-if="order.orderState === 1">
+          <a
+            href="javascript:"
+            @click="onCancelOrderButtonClickHandler(order.id)"
+            >取消订单</a
+          >
+        </p>
         <p v-if="[2, 3, 4, 5].includes(order.orderState)">
-          <a href="javascript:">>再次购买</a>
+          <a href="javascript:">再次购买</a>
         </p>
         <p v-if="[4, 5].includes(order.orderState)">
           <a href="javascript:">申请售后</a>
@@ -86,17 +92,27 @@ export default {
       default: () => {},
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     //  获取倒计时
     const { timeText, start } = useCountDown();
     let active = ref(0);
+    //当用户点击取消订单按钮时
+    const onCancelOrderButtonClickHandler = (id) => {
+      emit("onCancelOrder", id);
+    };
     // 获取订单列表数据
     if (props.order.orderState === 1) {
       //  开启倒计时
       start(props.order.countdown);
     }
 
-    return { orderStatus, timeText, start, active };
+    return {
+      orderStatus,
+      timeText,
+      start,
+      active,
+      onCancelOrderButtonClickHandler,
+    };
   },
 };
 </script>

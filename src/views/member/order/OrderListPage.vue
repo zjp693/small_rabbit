@@ -13,6 +13,7 @@
             v-for="item in orderList.items"
             :key="item.id"
             :order="item"
+            @onCancelOrder="onCancelOrderHandler"
           ></OrderItem>
         </div>
         <div v-if="!loading && orderList?.items.length === 0" class="none">
@@ -21,21 +22,24 @@
       </div>
     </div>
   </AppMemberLayout>
+  <CancelOrder ref="cancelOrderComponent"></CancelOrder>
 </template>
 
 <script>
 import AppMemberLayout from "@/components/AppMemberLayout";
 import { ref, watch } from "vue";
 import { orderStatus } from "@/api/constants";
-import OrderItem from "@/views/member/order/OrderItem";
+import OrderItem from "@/views/member/order/components/OrderItem";
 import { getOrderList } from "@/api/member";
+import CancelOrder from "@/views/member/order/components/CancelOrder";
 export default {
   name: "OrderListPage.vue",
-  components: { OrderItem, AppMemberLayout },
+  components: { CancelOrder, OrderItem, AppMemberLayout },
   setup() {
+    //用户存储取消订单弹层实例组件
+    const cancelOrderComponent = ref();
     const current = ref(0);
     //获取订单数据
-    console.log(orderStatus);
     const { orderList, loading, reqParams } = useOrderList();
     watch(current, () => {
       //  重置订单状态参数
@@ -43,7 +47,19 @@ export default {
       //  重置页面参数
       reqParams.value.page = 1;
     });
-    return { current, orderStatus, orderList, loading };
+    //当用户点击取消按钮时
+    const onCancelOrderHandler = () => {
+      //  渲染取消订单弹层
+      cancelOrderComponent.value.visible = true;
+    };
+    return {
+      current,
+      orderStatus,
+      orderList,
+      loading,
+      cancelOrderComponent,
+      onCancelOrderHandler,
+    };
   },
 };
 // 获取订单列表数据

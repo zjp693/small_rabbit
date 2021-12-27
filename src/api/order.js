@@ -48,3 +48,14 @@ export function submitOrder(order) {
 export function getOrderInfoById(id) {
   return requestWithToken(`/member/order/${id}`, "get");
 }
+/**
+ * 取消订单
+ * @param id 订单ID
+ * @param cancelReason 取消原因
+ * @return {AxiosPromise}
+ */
+export function cancelOrder({ id, cancelReason }) {
+  return requestWithToken(`/member/order/${id}/cancel`, "put", {
+    cancelReason,
+  });
+}

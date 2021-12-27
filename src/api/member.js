@@ -14,3 +14,10 @@ export function getCollection({ collectType = 1, page = 1, pageSize = 10 }) {
     pageSize,
   });
 }
+
+export function getBrowseHistory({ page = 1, pageSize = 10 }) {
+  return requestWithToken("/member/browseHistory", "get", {
+    page,
+    pageSize,
+  });
+}

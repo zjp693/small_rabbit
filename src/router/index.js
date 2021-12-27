@@ -10,6 +10,8 @@ const PayPage = () => import("@/views/pay/PayPage");
 import authGuard from "@/router/authGuard";
 import LoginPage from "@/views/login/LoginPage";
 import CheckoutPage from "@/views/pay/CheckoutPage";
+import OrderView from "@/views/member/order/OrderView";
+import OrderListPage from "@/views/member/order/OrderListPage";
 const PayResultPage = () => import("@/views/pay/PayResultPage");
 const MemberHomePage = () => import("@/views/member/home/MemberHomePage");
 const OrderDetailPage = () => import("@/views/member/order/OrderDetailPage");
@@ -56,8 +58,18 @@ const routes = [
     component: MemberHomePage,
   },
   {
-    path: "/member/order/:id",
-    component: OrderDetailPage,
+    path: "/member/order",
+    component: OrderView,
+    children: [
+      {
+        path: "",
+        component: OrderListPage,
+      },
+      {
+        path: ":id",
+        component: OrderDetailPage,
+      },
+    ],
   },
 ];
 
@@ -65,6 +77,8 @@ const router = createRouter({
   history: createWebHashHistory(),
   scrollBehavior: () => ({ top: 0 }),
   routes,
+  linkActiveClass: "fuzzy-active",
+  linkExactActiveClass: "exact-active",
 });
 
 //检测用户是否登录

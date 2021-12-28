@@ -75,3 +75,19 @@ export function deleteOrder(ids) {
 export function confirmReceiptGoods(id) {
   return requestWithToken(`/member/order/${id}/receipt`, "PUT");
 }
+/**
+ * 获取订单物流信息
+ * @param id 订单ID
+ * @return {AxiosPromise}
+ */
+export function getLogisticsByOrderId(id) {
+  return requestWithToken(`/member/order/${id}/logistics`, "get");
+}
+/**
+ * 获取订单详情
+ * @param id 订单ID
+ * @return {AxiosPromise}
+ */
+export function getOrderDetail(id) {
+  return requestWithToken(`/member/order/${id}`, "get");
+}

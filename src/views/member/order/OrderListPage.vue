@@ -14,6 +14,7 @@
             :key="item.id"
             :order="item"
             @onCancelOrder="onCancelOrderHandler"
+            @onViewLogistics="onViewLogisticsHandler"
           ></OrderItem>
         </div>
         <div v-if="!loading && orderList?.items.length === 0" class="none">
@@ -26,6 +27,9 @@
     ref="cancelOrderComponent"
     @onReloadOrderList="getData"
   ></CancelOrder>
+  <!-- 查看物流信息 -->
+
+  <OrderLogistics ref="OrderLogisticsComponent"></OrderLogistics>
 </template>
 
 <script>
@@ -35,9 +39,11 @@ import { orderStatus } from "@/api/constants";
 import OrderItem from "@/views/member/order/components/OrderItem";
 import { getOrderList } from "@/api/member";
 import CancelOrder from "@/views/member/order/components/CancelOrder";
+import OrderLogistics from "@/views/member/order/components/OrderLogistics";
+import { getLogisticsByOrderId } from "@/api/order";
 export default {
   name: "OrderListPage.vue",
-  components: { CancelOrder, OrderItem, AppMemberLayout },
+  components: { OrderLogistics, CancelOrder, OrderItem, AppMemberLayout },
   setup() {
     //用户存储取消订单弹层实例组件
     const cancelOrderComponent = ref();
@@ -56,6 +62,20 @@ export default {
       cancelOrderComponent.value.visible = true;
       cancelOrderComponent.value.id = id;
     };
+    //#region 查看物流
+    // 用于存储查看物流弹框组件实例对象
+    const OrderLogisticsComponent = ref();
+    // 当用户点击查看物流按钮时
+    const onViewLogisticsHandler = (id) => {
+      // 渲染查看物流弹框组件
+      OrderLogisticsComponent.value.visible = true;
+      //  获取订单物流信息
+      getLogisticsByOrderId(id).then((data) => {
+        //存储物流信息
+        OrderLogisticsComponent.value.logistics = data.result;
+      });
+    };
+    //#endregion
     return {
       current,
       orderStatus,
@@ -64,6 +84,8 @@ export default {
       cancelOrderComponent,
       onCancelOrderHandler,
       getData,
+      OrderLogisticsComponent,
+      onViewLogisticsHandler,
     };
   },
 };

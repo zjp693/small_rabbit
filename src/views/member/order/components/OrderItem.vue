@@ -37,7 +37,11 @@
       <!-- orderStatus是一个数组, 数组的索引和订单状态值是对应关系 -->
       <div class="column state">
         <p>{{ orderStatus[order.orderState].label }}</p>
-        <a v-if="order.orderState === 3" href="javascript:" class="green"
+        <a
+          v-if="order.orderState === 3"
+          href="javascript:"
+          class="green"
+          @click="onViewLogisticsButtonClickHandler(order.id)"
           >查看物流</a
         >
         <a v-if="order.orderState === 4" href="javascript:" class="green"
@@ -127,6 +131,12 @@ export default {
       }
     };
     //#endregion
+    //#region 当用户点击查看物流按钮时
+    const onViewLogisticsButtonClickHandler = (id) => {
+      emit("onViewLogistics", id);
+    };
+    //#endregion
+
     return {
       orderStatus,
       timeText,
@@ -134,6 +144,7 @@ export default {
       active,
       onCancelOrderButtonClickHandler,
       onDeleteOrderButtonClickHandler,
+      onViewLogisticsButtonClickHandler,
     };
   },
 };

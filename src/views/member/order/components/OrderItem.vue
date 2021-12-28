@@ -3,9 +3,12 @@
     <div class="head" v-if="order">
       <span>下单时间：{{ order.createTime }}</span>
       <span>订单编号：{{ order.id }}</span>
-      <span class="down-time">
+      <span
+        class="down-time"
+        v-if="order.orderState === 1 && order.countdown !== -1"
+      >
         <i class="iconfont icon-down-time"></i>
-        <b>付款截止：{{ timeText }}</b>
+        <b>付款截止：{{ dayjs.unix(count).format("mm分ss秒") }}</b>
       </span>
       <!-- 订单状态为 已完成(5)或已取消(6)时可以删除订单 -->
       <a

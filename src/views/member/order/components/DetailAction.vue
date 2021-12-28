@@ -57,11 +57,6 @@ export default {
       default: () => {},
     },
   },
-  setup(props) {
-    setTimeout(() => {
-      console.log(props);
-    }, 2000);
-  },
 };
 </script>
 <style scoped lang="less">

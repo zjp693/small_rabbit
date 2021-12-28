@@ -41,3 +41,11 @@ export function getOrderList({ page, pageSize, orderState }) {
     orderState,
   });
 }
+/**
+ * 确认收货
+ * @param id 订单ID
+ * @return {AxiosPromise}
+ */
+export function confirmReceiptGoods(id) {
+  return requestWithToken(`/member/order/${id}/receipt`, "PUT");
+}

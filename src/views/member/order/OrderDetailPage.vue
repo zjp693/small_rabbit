@@ -1,13 +1,12 @@
 <template>
   <AppMemberLayout>
     <!-- 订单详情-->
-    <div class="order-detail-page">
+    <div class="order-detail-page" v-if="orderDetail">
       <!-- 操作栏 -->
       <DetailAction
         :orderDetail="orderDetail"
         :getOrderDetail="getData"
       ></DetailAction>
-
       <!-- 步骤条-->
       <XtxSteps
         :active="orderDetail.orderState === 6 ? 1 : orderDetail.orderState"
@@ -27,9 +26,9 @@
           :desc="orderDetail.evaluationTime"
         ></XtxStepItem>
       </XtxSteps>
-
       <!-- 物流栏 -->
       <!-- 订单商品信息 -->
+      <DetailOrderGoods :orderDetail="orderDetail" />
     </div>
   </AppMemberLayout>
 </template>
@@ -39,9 +38,18 @@ import { useRoute } from "vue-router";
 import { ref } from "vue";
 import { getOrderDetail } from "@/api/order";
 import DetailAction from "@/views/member/order/components/DetailAction";
+import DetailOrderGoods from "@/views/member/order/components/DetailOrderGooods";
+import XtxSteps from "@/components/library/XtxSteps";
+import XtxStepItem from "@/components/library/XtxStepItem";
 export default {
   name: "OrderDetailPage",
-  components: { DetailAction, AppMemberLayout },
+  components: {
+    XtxStepItem,
+    XtxSteps,
+    DetailOrderGoods,
+    DetailAction,
+    AppMemberLayout,
+  },
   setup() {
     const { orderDetail, getData } = useOrderDetail();
     return {

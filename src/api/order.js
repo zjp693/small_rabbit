@@ -59,3 +59,19 @@ export function cancelOrder({ id, cancelReason }) {
     cancelReason,
   });
 }
+/**
+ * 删除订单
+ * @param ids 订单ID集合
+ * @return {AxiosPromise}
+ */
+export function deleteOrder(ids) {
+  return requestWithToken("/member/order", "delete", { ids });
+}
+/**
+ * 确认收货
+ * @param id 订单ID
+ * @return {AxiosPromise}
+ */
+export function confirmReceiptGoods(id) {
+  return requestWithToken(`/member/order/${id}/receipt`, "PUT");
+}

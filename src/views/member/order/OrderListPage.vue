@@ -22,7 +22,10 @@
       </div>
     </div>
   </AppMemberLayout>
-  <CancelOrder ref="cancelOrderComponent"></CancelOrder>
+  <CancelOrder
+    ref="cancelOrderComponent"
+    @onReloadOrderList="getData"
+  ></CancelOrder>
 </template>
 
 <script>
@@ -40,7 +43,7 @@ export default {
     const cancelOrderComponent = ref();
     const current = ref(0);
     //获取订单数据
-    const { orderList, loading, reqParams } = useOrderList();
+    const { orderList, loading, reqParams, getData } = useOrderList();
     watch(current, () => {
       //  重置订单状态参数
       reqParams.value.orderState = current.value;
@@ -48,9 +51,10 @@ export default {
       reqParams.value.page = 1;
     });
     //当用户点击取消按钮时
-    const onCancelOrderHandler = () => {
+    const onCancelOrderHandler = (id) => {
       //  渲染取消订单弹层
       cancelOrderComponent.value.visible = true;
+      cancelOrderComponent.value.id = id;
     };
     return {
       current,
@@ -59,6 +63,7 @@ export default {
       loading,
       cancelOrderComponent,
       onCancelOrderHandler,
+      getData,
     };
   },
 };
@@ -82,7 +87,7 @@ function useOrderList() {
   };
   // 监控请求参数变化, 重新获取订单列表数据
   watch(reqParams.value, () => getData(), { immediate: true });
-  return { orderList, reqParams, loading };
+  return { orderList, reqParams, loading, getData };
 }
 </script>
 

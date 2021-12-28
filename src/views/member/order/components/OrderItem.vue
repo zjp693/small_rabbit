@@ -8,7 +8,11 @@
         <b>付款截止：{{ timeText }}</b>
       </span>
       <!-- 订单状态为 已完成(5)或已取消(6)时可以删除订单 -->
-      <a href="javascript:" class="del" v-if="[5, 6].includes(order.orderState)"
+      <a
+        href="javascript:"
+        class="del"
+        v-if="[5, 6].includes(order.orderState)"
+        @click="onDeleteOrderButtonClickHandler(order.id)"
         >删除</a
       >
     </div>
@@ -84,6 +88,9 @@
 import useCountDown from "@/hooks/useCountDown";
 import { orderStatus } from "@/api/constants";
 import { ref } from "vue";
+import Confirm from "@/components/library/Confirm";
+import { deleteOrder } from "@/api/order";
+import Message from "@/components/library/Message";
 export default {
   name: "OrderItem",
   props: {
@@ -105,13 +112,28 @@ export default {
       //  开启倒计时
       start(props.order.countdown);
     }
-
+    //#region 当用户点击删除订单的时候
+    const onDeleteOrderButtonClickHandler = async (id) => {
+      try {
+        await Confirm({
+          title: "温馨提示",
+          content: "订单删除后不可恢复",
+        });
+        await deleteOrder([id]);
+        Message({ type: "success", text: "订单删除成功" });
+        await emit("onOrderListReload");
+      } catch (error) {
+        Message({ type: "error", text: "订单删除失败" });
+      }
+    };
+    //#endregion
     return {
       orderStatus,
       timeText,
       start,
       active,
       onCancelOrderButtonClickHandler,
+      onDeleteOrderButtonClickHandler,
     };
   },
 };

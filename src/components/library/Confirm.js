@@ -16,7 +16,6 @@ export default function Confirm({ title = "温馨提示", content }) {
     };
     // 当用户点击取消按钮时要执行的方法
     const onCancelButtonClickHandler = () => {
-      console.log(1);
       reject();
       // 执行离场动画
       vNode.el.classList.remove("fade");

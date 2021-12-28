@@ -42,7 +42,7 @@ export default {
     const onCancelOrderHandler = async () => {
       try {
         //发送请求 取消订单
-        console.log(proxy, selected.value);
+
         await cancelOrder({ id: proxy.id, cancelReason: selected.value });
         //  用户提示
         Message({ type: "success", text: "订单取消成功" });

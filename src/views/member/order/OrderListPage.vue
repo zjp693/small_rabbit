@@ -15,6 +15,7 @@
             :order="item"
             @onCancelOrder="onCancelOrderHandler"
             @onViewLogistics="onViewLogisticsHandler"
+            @onReloadOrderList="getData"
           ></OrderItem>
         </div>
         <div v-if="!loading && orderList?.items.length === 0" class="none">
@@ -28,7 +29,6 @@
     @onReloadOrderList="getData"
   ></CancelOrder>
   <!-- 查看物流信息 -->
-
   <OrderLogistics ref="OrderLogisticsComponent"></OrderLogistics>
 </template>
 

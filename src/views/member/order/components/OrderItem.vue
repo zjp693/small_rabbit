@@ -67,7 +67,11 @@
           v-if="order.orderState === 1"
           >立即付款</XtxButton
         >
-        <XtxButton type="primary" size="small" v-if="order.orderState === 3"
+        <XtxButton
+          type="primary"
+          size="small"
+          @click="onConfirmReceiptButtonClickHandler(order.id)"
+          v-if="order.orderState === 3"
           >确认收货</XtxButton
         >
         <p>
@@ -98,6 +102,8 @@ import { ref } from "vue";
 import Confirm from "@/components/library/Confirm";
 import { deleteOrder } from "@/api/order";
 import Message from "@/components/library/Message";
+import { confirmReceiptGoods } from "@/api/member";
+import dayjs from "dayjs";
 export default {
   name: "OrderItem",
   props: {
@@ -128,7 +134,7 @@ export default {
         });
         await deleteOrder([id]);
         Message({ type: "success", text: "订单删除成功" });
-        await emit("onOrderListReload");
+        await emit("onReloadOrderList");
       } catch (error) {
         Message({ type: "error", text: "订单删除失败" });
       }
@@ -137,6 +143,23 @@ export default {
     //#region 当用户点击查看物流按钮时
     const onViewLogisticsButtonClickHandler = (id) => {
       emit("onViewLogistics", id);
+    };
+    //#endregion
+    //#region 确定收货
+    const onConfirmReceiptButtonClickHandler = async (id) => {
+      try {
+        //和用户进行确定
+        await Confirm({ title: "确定收货", content: "确定要进行收货吗？" });
+        //发送收货请求 进行确定收货
+        await confirmReceiptGoods(id);
+        //  用户提示
+        Message({ type: "success", text: "确定收货成功" });
+        //  重新获取订单
+        emit("onReloadOrderList");
+      } catch (error) {
+        //用户提示
+        Message({ type: "warn", text: "确定收货失败" });
+      }
     };
     //#endregion
 
@@ -148,6 +171,8 @@ export default {
       onCancelOrderButtonClickHandler,
       onDeleteOrderButtonClickHandler,
       onViewLogisticsButtonClickHandler,
+      onConfirmReceiptButtonClickHandler,
+      dayjs,
     };
   },
 };

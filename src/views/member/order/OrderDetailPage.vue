@@ -6,6 +6,7 @@
       <DetailAction
         :orderDetail="orderDetail"
         :getOrderDetail="getData"
+        @onOrderListReload="getData($event)"
       ></DetailAction>
       <!-- 步骤条-->
       <XtxSteps
@@ -27,6 +28,7 @@
         ></XtxStepItem>
       </XtxSteps>
       <!-- 物流栏 -->
+
       <!-- 订单商品信息 -->
       <DetailOrderGoods :orderDetail="orderDetail" />
     </div>
@@ -41,6 +43,7 @@ import DetailAction from "@/views/member/order/components/DetailAction";
 import DetailOrderGoods from "@/views/member/order/components/DetailOrderGooods";
 import XtxSteps from "@/components/library/XtxSteps";
 import XtxStepItem from "@/components/library/XtxStepItem";
+
 export default {
   name: "OrderDetailPage",
   components: {

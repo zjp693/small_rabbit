@@ -91,3 +91,11 @@ export function getLogisticsByOrderId(id) {
 export function getOrderDetail(id) {
   return requestWithToken(`/member/order/${id}`, "get");
 }
+/**
+ * 根据订单ID创建新的订单
+ * @param id 订单ID
+ * @return {AxiosPromise}
+ */
+export function createOrderById(id) {
+  return requestWithToken(`/member/order/repurchase/${id}`, "get");
+}

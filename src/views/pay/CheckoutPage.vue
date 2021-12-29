@@ -97,9 +97,9 @@
 <script>
 import AppLayout from "@/components/AppLayout";
 import { ref } from "vue";
-import { createOrder, submitOrder } from "@/api/order";
+import { createOrder, createOrderById, submitOrder } from "@/api/order";
 import CheckoutAddress from "@/views/pay/components/CheckoutAddress";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import Message from "@/components/library/Message";
 export default {
@@ -108,6 +108,7 @@ export default {
   setup() {
     const { order } = getOrderInfo();
     // 获取订单信息
+
     const { referOrder, checkoutAddressInstance } = getOrderInfo();
     return { order, referOrder, checkoutAddressInstance };
   },
@@ -121,6 +122,7 @@ function getOrderInfo() {
   const checkoutAddressInstance = ref();
   //获取路由对象
   const router = useRouter();
+  const route = useRoute();
   //获取store 对象
   const store = useStore();
   //提交订单
@@ -165,8 +167,15 @@ function getOrderInfo() {
         Message({ type: "error", text: "订单提交失败" });
       });
   };
-  //  用于创建订单并存储订单信息
-  createOrder().then((data) => (order.value = data.result));
+
+  // console.log(router.query);
+  //如果参数id 存在
+  if (route.query.id) {
+    createOrderById(route.query.id).then((data) => (order.value = data.result));
+  } else {
+    //  用于创建订单并存储订单信息
+    createOrder().then((data) => (order.value = data.result));
+  }
   //  返回订单信息
   return {
     order,

@@ -47,9 +47,6 @@ export default {
     },
   },
   setup(props, { emit }) {
-    setTimeout(() => {
-      console.log(props.list);
-    }, 1000);
     const visible = ref(false);
     const onAddressSwitchHandler = (id) => {
       emit("onAddressChanged", id);

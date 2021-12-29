@@ -114,7 +114,7 @@ export default {
   },
   setup(props, { emit }) {
     //  获取倒计时
-    const { timeText, start } = useCountDown();
+    const { count, start } = useCountDown();
     let active = ref(0);
     //当用户点击取消订单按钮时
     const onCancelOrderButtonClickHandler = (id) => {
@@ -165,7 +165,7 @@ export default {
 
     return {
       orderStatus,
-      timeText,
+      count,
       start,
       active,
       onCancelOrderButtonClickHandler,
